@@ -28,6 +28,9 @@ public class Patient {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, unique = true)
+	private String healthCardId;
+
 	private String firstName;
 
 	private String lastName;
@@ -35,63 +38,40 @@ public class Patient {
 	@Temporal(TemporalType.DATE)
 	private Date dob;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "patient_previous_diagnosis",
-        joinColumns = @JoinColumn(name = "patient_id"),
-        inverseJoinColumns = @JoinColumn(name = "diagnosis_id")
-    )
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@JoinTable(name = "patient_previous_diagnosis", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "diagnosis_id"))
 	private List<Diagnosis> previousDiagnosis;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "patient_previous_therapies",
-        joinColumns = @JoinColumn(name = "patient_id"),
-        inverseJoinColumns = @JoinColumn(name = "therapy_id")
-    )
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@JoinTable(name = "patient_previous_therapies", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "therapy_id"))
 	private List<Therapy> previousTherapies;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "patient_current_diagnosis",
-        joinColumns = @JoinColumn(name = "patient_id"),
-        inverseJoinColumns = @JoinColumn(name = "diagnosis_id")
-    )
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@JoinTable(name = "patient_current_diagnosis", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "diagnosis_id"))
 	private List<Diagnosis> currentDiagnosis;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "patient_current_therapies",
-        joinColumns = @JoinColumn(name = "patient_id"),
-        inverseJoinColumns = @JoinColumn(name = "therapy_id")
-    )
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@JoinTable(name = "patient_current_therapies", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "therapy_id"))
 	private List<Therapy> currentTherapies;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "patient_previous_symptoms",
-        joinColumns = @JoinColumn(name = "patient_id"),
-        inverseJoinColumns = @JoinColumn(name = "symptom_id")
-    )
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@JoinTable(name = "patient_previous_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> previousSymptoms;
 
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "patient_current_symptoms",
-        joinColumns = @JoinColumn(name = "patient_id"),
-        inverseJoinColumns = @JoinColumn(name = "symptom_id")
-    )
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@JoinTable(name = "patient_current_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> currentSymptoms;
 
 	public Patient() {
 		super();
 	}
 
-	public Patient(Long id, String firstName, String lastName, Date dob, List<Diagnosis> previousDiagnosis,
-			List<Therapy> previousTherapies, List<Diagnosis> currentDiagnosis, List<Therapy> currentTherapies,
-			List<Symptom> previousSymptoms, List<Symptom> currentSymptoms) {
+	public Patient(Long id, String healthCardId, String firstName, String lastName, Date dob,
+			List<Diagnosis> previousDiagnosis, List<Therapy> previousTherapies, List<Diagnosis> currentDiagnosis,
+			List<Therapy> currentTherapies, List<Symptom> previousSymptoms, List<Symptom> currentSymptoms) {
 		super();
 		this.id = id;
+		this.healthCardId = healthCardId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.dob = dob;
@@ -109,6 +89,14 @@ public class Patient {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getHealthCardId() {
+		return healthCardId;
+	}
+
+	public void setHealthCardId(String healthCardId) {
+		this.healthCardId = healthCardId;
 	}
 
 	public String getFirstName() {
