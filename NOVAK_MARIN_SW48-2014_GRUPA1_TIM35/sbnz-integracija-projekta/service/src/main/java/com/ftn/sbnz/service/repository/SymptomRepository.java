@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface SymptomRepository extends JpaRepository<Symptom, Long> {
 
-    Optional<Symptom> findByName(String name);
+    Symptom findByName(String name);
 
-    // Fetch all symptoms that are parents of a given symptom ID
-    @Query("SELECT s.parentSymptoms FROM Symptom s WHERE s.id = :symptomId")
-    List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId);
+//    // Fetch all symptoms that are parents of a given symptom ID
+//    @Query("SELECT s.parentSymptoms FROM Symptom s WHERE s.id = :symptomId")
+//    List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId);
 
     // Fetch all symptoms that are children of a given symptom ID
     @Query("SELECT s.childSymptoms FROM Symptom s WHERE s.id = :symptomId")

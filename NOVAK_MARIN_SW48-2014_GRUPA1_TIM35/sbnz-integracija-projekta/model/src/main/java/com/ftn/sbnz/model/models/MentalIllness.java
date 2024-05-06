@@ -27,9 +27,11 @@ public class MentalIllness extends Symptom{
 		// TODO Auto-generated constructor stub
 	}
 
-	public MentalIllness(Long id, String name, List<Symptom> parentSymptoms, List<Symptom> childSymptoms) {
-		super(id, name, parentSymptoms, childSymptoms);
+	public MentalIllness(Long id, String name, boolean isAMentalIllness, List<Symptom> childSymptoms) {
+		super(id, name, isAMentalIllness, childSymptoms);
 		// TODO Auto-generated constructor stub
 	}
+
+	
 	
 }

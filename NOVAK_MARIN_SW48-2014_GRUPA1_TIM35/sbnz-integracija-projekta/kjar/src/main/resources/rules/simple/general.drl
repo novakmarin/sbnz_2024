@@ -1,0 +1,19 @@
+package simple;
+
+import com.ftn.sbnz.model.models.*;
+
+rule "Add Complex Symptoms to Patients"
+when
+    $patient : Patient($symptoms : currentSymptoms)
+
+    $parentSymptom : Symptom(childSymptoms != null, childSymptoms.size() > 0)
+
+    eval($symptoms.containsAll($parentSymptom.getChildSymptoms()))
+
+    not Symptom(id == $parentSymptom.id) from $symptoms
+then
+    $patient.getCurrentSymptoms().add($parentSymptom);
+    System.out.println("USLO U PRAVILO.");
+    System.out.println($patient);
+    update($patient);
+end

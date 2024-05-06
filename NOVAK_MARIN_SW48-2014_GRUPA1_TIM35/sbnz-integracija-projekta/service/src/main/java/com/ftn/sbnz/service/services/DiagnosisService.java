@@ -1,11 +1,13 @@
 package com.ftn.sbnz.service.services;
 
+import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Diagnosis;
 import com.ftn.sbnz.service.repository.DiagnosisRepository;
+import com.ftn.sbnz.service.repository.SymptomRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,12 @@ import java.util.Optional;
 public class DiagnosisService {
 
     private final DiagnosisRepository diagnosisRepository;
+    
+    @Autowired
+    SymptomService symptomService;
+    
+    @Autowired
+    PatientService patientService;
 
     @Autowired
     public DiagnosisService(DiagnosisRepository diagnosisRepository) {
