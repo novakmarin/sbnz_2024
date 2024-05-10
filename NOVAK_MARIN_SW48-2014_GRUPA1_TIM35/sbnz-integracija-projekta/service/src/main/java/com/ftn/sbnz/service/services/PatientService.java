@@ -55,7 +55,7 @@ public class PatientService {
     }
 
     // Get a patient by health card ID
-    public Optional<Patient> getPatientByHealthCardId(String healthCardId) {
+    public Patient getPatientByHealthCardId(String healthCardId) {
         return patientRepository.findByHealthCardId(healthCardId);
     }
 

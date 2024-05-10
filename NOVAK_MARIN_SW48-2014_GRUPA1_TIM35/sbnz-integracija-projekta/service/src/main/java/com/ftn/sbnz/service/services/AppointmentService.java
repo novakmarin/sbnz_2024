@@ -1,12 +1,16 @@
 package com.ftn.sbnz.service.services;
 
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Appointment;
+import com.ftn.sbnz.model.models.Symptom;
 import com.ftn.sbnz.service.repository.AppointmentRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,14 +20,42 @@ import java.util.Optional;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    
+    @Autowired
+    PatientService patientService;
+    
+    @Autowired
+    SymptomService symptomService;
+    
+    @Autowired
+    KieContainer kieContainer;
 
     @Autowired
     public AppointmentService(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
     }
+    
 
     public Appointment saveAppointment(Appointment appointment) {
+    
         return appointmentRepository.save(appointment);
+    }
+    
+    public Appointment fireRules(Appointment appointment) {
+    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
+    	ArrayList<Appointment> allAppointments = (ArrayList<Appointment>) appointmentRepository.findAll();
+    	for(Symptom s: allSymptoms) {
+    		kieSession.insert(s);
+    	}
+    	for(Appointment a: allAppointments) {
+    		kieSession.insert(a);
+    	}
+    	kieSession.insert(appointment);
+    	kieSession.insert(appointment.getPatient());
+    	kieSession.fireAllRules();
+    	kieSession.dispose();
+    	return appointment;
     }
 
     public Optional<Appointment> findAppointmentById(Long appointmentId) {

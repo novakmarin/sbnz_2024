@@ -36,6 +36,8 @@ public class Symptom {
 	private String name;
 
 	private boolean isAMentalIllness;
+	
+	private boolean hasSpecialDiagnostics;
 
 	//@OneToMany(cascade = CascadeType.ALL)
 	//@JoinColumn(name = "parent_id")
@@ -52,11 +54,12 @@ public class Symptom {
 		super();
 	}
 
-	public Symptom(Long id, String name, boolean isAMentalIllness, List<Symptom> childSymptoms) {
+	public Symptom(Long id, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics, List<Symptom> childSymptoms) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.isAMentalIllness = isAMentalIllness;
+		this.hasSpecialDiagnostics = hasSpecialDiagnostics;
 		this.childSymptoms = childSymptoms;
 	}
 
@@ -91,6 +94,16 @@ public class Symptom {
 	public void setChildSymptoms(List<Symptom> childSymptoms) {
 		this.childSymptoms = childSymptoms;
 	}
+	
+	
+
+	public boolean isHasSpecialDiagnostics() {
+		return hasSpecialDiagnostics;
+	}
+
+	public void setHasSpecialDiagnostics(boolean hasSpecialDiagnostics) {
+		this.hasSpecialDiagnostics = hasSpecialDiagnostics;
+	}
 
 	@Override
 	public String toString() {
@@ -99,7 +112,7 @@ public class Symptom {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(childSymptoms, id, isAMentalIllness, name);
+		return Objects.hash(childSymptoms, id, isAMentalIllness, hasSpecialDiagnostics, name);
 	}
 
 	@Override

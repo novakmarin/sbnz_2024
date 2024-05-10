@@ -1,14 +1,17 @@
 package simple;
 
 import com.ftn.sbnz.model.models.*;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.List;
 
 rule "Add Complex Symptoms to Patients"
 when
     $patient : Patient($symptoms : currentSymptoms)
 
-    $parentSymptom : Symptom(childSymptoms != null, childSymptoms.size() > 0)
+    $parentSymptom : Symptom(hasSpecialDiagnostics == false, childSymptoms != null, childSymptoms.size() > 0)
 
-    eval($symptoms.containsAll($parentSymptom.getChildSymptoms()))
+    eval($symptoms.containsAll($parentSymptom.getChildSymptoms()))    
 
     not Symptom(id == $parentSymptom.id) from $symptoms
 then
@@ -16,4 +19,41 @@ then
     System.out.println("USLO U PRAVILO.");
     System.out.println($patient);
     update($patient);
+end
+
+
+rule "Identify Chronic GAD Based on Patient History"
+when
+    // Get the 'GAD' symptom object
+    $gadSymptom : Symptom(name == "Generalizovani anksiozni poremećaj")
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    $symptom : Symptom(name == "Anksioznost") from $patientSymptoms
+    
+    $appointment : Appointment(patient == $patient, 
+                               date.before(monthsAgo(-6)) == true,
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0)
+                               
+    $oldSymptom : Symptom(name == "Anksioznost") from $appointment.currentSymptoms
+
+    //$otherSymptom : Symptom(name != "Anksioznost") from $gadSymptom.childSymptoms
+
+    not Symptom(id == $gadSymptom.id) from $patientSymptoms
+    not Symptom(id == $gadSymptom.id) from $appointment.currentSymptoms
+    
+    $sNo: Number(intValue >= 2) from accumulate(
+        $s1: Symptom(name != "Anksioznost") from $patient.currentSymptoms,
+        init(int count = 0;),
+        action( if ($gadSymptom.getChildSymptoms().contains($s1)) count++;),
+        result(count)
+    )
+
+then
+    // Add 'GAD' to patient's currentSymptoms if not already present
+    System.out.println("USLO U DRUGO PRAVILO.");
+    System.out.println($appointment);
+    System.out.println($sNo);
+    //$appointment.getCurrentSymptoms().add($gadSymptom);
+    $patient.getCurrentSymptoms().add($gadSymptom);
 end
