@@ -16,7 +16,7 @@ when
     not Symptom(id == $parentSymptom.id) from $symptoms
 then
     $patient.getCurrentSymptoms().add($parentSymptom);
-    System.out.println("USLO U PRAVILO.");
+    System.out.println("RULE 1: Symptom " + $parentSymptom.getName() + " added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($patient);
     update($patient);
 end
@@ -51,9 +51,31 @@ when
 
 then
     // Add 'GAD' to patient's currentSymptoms if not already present
-    System.out.println("USLO U DRUGO PRAVILO.");
+    System.out.println("RULE 2: Symptom GAD added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($appointment);
     System.out.println($sNo);
     //$appointment.getCurrentSymptoms().add($gadSymptom);
     $patient.getCurrentSymptoms().add($gadSymptom);
+end
+
+rule "Identify manic episode"
+when
+    $manicSymptom : Symptom(name == "Manična epizoda")
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $manicSymptom.id) from $patientSymptoms
+    
+    $sNo: Number(intValue >= 4) from accumulate(
+        $s1: Symptom() from $patient.currentSymptoms,
+        init(int count = 0;),
+        action( if ($manicSymptom.getChildSymptoms().contains($s1)) count++;),
+        result(count)
+    )
+
+then
+    // Add manic episode to patient's currentSymptoms
+    System.out.println("RULE 3: Symptom manic episode added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($manicSymptom);
 end

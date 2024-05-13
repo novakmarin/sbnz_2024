@@ -73,6 +73,38 @@ public class TestController {
 		return new ResponseEntity<Patient>(patient, HttpStatus.CREATED);
 	}
 	
+	@RequestMapping(value = "/manic")
+	@PermitAll
+	public ResponseEntity<Patient> testManic(HttpServletRequest request){
+
+		ArrayList<String> symptomNames = new ArrayList<String>(Arrays.asList(
+				"Grandioznost",
+				"Pretjerana razgovorljivost",
+				"Nestabilna pažnja",
+				"Višak energije",
+				"Povećana motivacija"
+				));
+		
+		
+		ArrayList<Symptom> currentSymptoms1 = new ArrayList<Symptom>();
+		
+		ArrayList<Symptom> previousSymptoms1 = new ArrayList<Symptom>();
+		
+		for (String s : symptomNames) {
+			Symptom newSymptom = symptomService.findSymptomByName(s);
+			currentSymptoms1.add(newSymptom);
+		}
+		
+		
+		Patient patient = new Patient(1L, "QWER120", "Stevan", "Stevanović", new Date(1980, 6, 2), null, null, null, null, null, null);
+		patient.setCurrentSymptoms(currentSymptoms1);
+		patient = patientService.addComplexSymptoms(patient);
+		
+		
+		System.out.println(patient);
+		return new ResponseEntity<Patient>(patient, HttpStatus.CREATED);
+	}
+	
 	@RequestMapping(value = "/gad")
 	@PermitAll
 	public ResponseEntity<Patient> testGad(HttpServletRequest request){
@@ -117,6 +149,8 @@ public class TestController {
 		System.out.println(currentAppointment.getPatient());
 		return new ResponseEntity<Patient>(currentAppointment.getPatient(), HttpStatus.CREATED);
 	}
+	
+	
 	
 	
 	@RequestMapping(value = "/addComplex")

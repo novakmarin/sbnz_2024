@@ -32,12 +32,18 @@ VALUES
 ('Symptom', 29, false, false, 'Problemi sa snom'),
 ('Symptom', 30, false, false, 'Anksioznost'),
 ('Symptom', 31, false, false, 'Manjak energije'),
-('Symptom', 32, false, false,  'Socijalna anksioznost'),
+('Symptom', 32, false, true,  'Socijalna anksioznost'),
 ('Symptom', 33, false, true,  'Depresivni poremećaj'),
 ('Symptom', 34, false, false, 'Briga'),
 ('Symptom', 35, false, false, 'Zamor'),
 ('Symptom', 36, false, false, 'Razdražljivost'),
-('Symptom', 37, true, true,  'Generalizovani anksiozni poremećaj');
+('Symptom', 37, true,  true,  'Generalizovani anksiozni poremećaj'),
+('Symptom', 38, true,  true,  'Manična epizoda'),
+('Symptom', 39, false, false, 'Grandioznost'),
+('Symptom', 40, false, false, 'Pretjerana razgovorljivost'),
+('Symptom', 41, false, false, 'Ubrzane misli'),
+('Symptom', 42, false, false, 'Nestabilna pažnja'),
+('Symptom', 43, false, false, 'Višak energije');
 
 -- Inserts for symptom_relationship table (unchanged)
 INSERT INTO symptom_relationship (parent_symptom_id, child_symptom_id) 
@@ -72,7 +78,14 @@ VALUES
 (37, 30),
 (37, 24),
 (37, 35),
-(37, 36);
+(37, 36),
+(38, 39),
+(38, 40),
+(38, 41),
+(38, 42),
+(38, 43),
+(38, 3),
+(38, 25);
 
 -- Inserts for patient table
 INSERT INTO patient(id, dob, first_name, health_card_id, last_name) 
