@@ -45,6 +45,28 @@ public class PatientService {
     	kieSession.dispose();
     	return patient;
     }
+    
+    public List<Patient> findPatientsWithSymptom(Symptom symptom) {
+    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
+    	ArrayList<Patient> allPatients = (ArrayList<Patient>) patientRepository.findAll();
+    	for(Symptom s: allSymptoms) {
+    		if(!s.getName().equals(symptom.getName())) {
+        		kieSession.insert(s);
+    		}
+    	}
+    	for(Patient p: allPatients) {
+    		kieSession.insert(p);
+    	}
+    	String symptomName = symptom.getName();
+    	List<Patient> patients = new ArrayList<Patient>();
+    	kieSession.insert(patients);
+    	kieSession.insert(symptomName);
+    	kieSession.insert(symptom);
+    	kieSession.fireAllRules();
+    	kieSession.dispose();
+    	return patients;
+    }
 
     public Patient createPatient(Patient patient) {
         return patientRepository.save(patient);

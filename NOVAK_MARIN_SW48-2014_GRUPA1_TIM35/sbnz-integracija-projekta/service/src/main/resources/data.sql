@@ -90,7 +90,8 @@ VALUES
 -- Inserts for patient table
 INSERT INTO patient(id, dob, first_name, health_card_id, last_name) 
 VALUES
-('1', '1984-07-02', 'Marko', 'QWER122', 'Markovic');
+('1', '1984-07-02', 'Marko', 'QWER122', 'Markovic'),
+('2', '1992-06-02', 'Backwards', 'QWER222', 'Backwardsic');
 
 
 -- Inserts for patient_current_symptoms table
@@ -99,7 +100,8 @@ VALUES
 (1, 30),
 (1, 35),
 (1, 24),
-(1, 36);
+(1, 36),
+(2, 32);
 
 
 -- Inserts for appointment table

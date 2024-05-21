@@ -150,6 +150,15 @@ public class TestController {
 		return new ResponseEntity<Patient>(currentAppointment.getPatient(), HttpStatus.CREATED);
 	}
 	
+	@RequestMapping(value = "/backwards")
+	@PermitAll
+	public ResponseEntity<ArrayList<Patient>> testBackwards(HttpServletRequest request){
+		Symptom symptom = symptomService.findSymptomByName("Briga");		
+		//System.out.println(symptom);
+		ArrayList<Patient> patients = (ArrayList<Patient>) patientService.findPatientsWithSymptom(symptom);
+		return new ResponseEntity<ArrayList<Patient>>(patients, HttpStatus.CREATED);
+	}
+	
 	
 	
 	

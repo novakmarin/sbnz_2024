@@ -24,7 +24,6 @@ end
 
 rule "Identify Chronic GAD Based on Patient History"
 when
-    // Get the 'GAD' symptom object
     $gadSymptom : Symptom(name == "Generalizovani anksiozni poremećaj")
 
 	$patient : Patient($patientSymptoms : currentSymptoms)
@@ -50,7 +49,6 @@ when
     )
 
 then
-    // Add 'GAD' to patient's currentSymptoms if not already present
     System.out.println("RULE 2: Symptom GAD added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($appointment);
     System.out.println($sNo);
@@ -74,8 +72,48 @@ when
     )
 
 then
-    // Add manic episode to patient's currentSymptoms
     System.out.println("RULE 3: Symptom manic episode added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($sNo);
     $patient.getCurrentSymptoms().add($manicSymptom);
+end
+
+query hasASymptom(Patient patient, Symptom symptom)
+    $symptom: Symptom( symptom.name; ) from patient.currentSymptoms
+    or
+    //mozda current
+    ($newParent: Symptom() from patient.currentSymptoms
+    and
+    //$symptom1: Symptom( symptom.name; )
+    isASubsymptomOf(symptom, $newParent;))
+end
+
+query isASubsymptomOf(Symptom child, Symptom parent)
+    $parentSymptom: Symptom( parent.name; childSymptoms != null)
+    Symptom( child.name; ) from $parentSymptom.childSymptoms
+    or
+    ($subsymptom: Symptom() from $parentSymptom.childSymptoms
+    and
+    //vrv greska arg 2
+    eval($subsymptom != null)
+    and
+    isASubsymptomOf(child, $subsymptom;))
+end
+
+rule "Getting patient with a symptom"
+lock-on-active true
+when
+    $patients: List()
+    $symptomName: String()
+    $p: Patient()
+    $s: Symptom(name == $symptomName)
+    not Patient( id == $p.id) from $patients
+    //$s1: Symptom(name == "Briga")
+    //$s2: Symptom(name == "Socijalna anksioznost")
+    hasASymptom( $p, $s; )
+    //isASubsymptomOf( $s1, $s2; )
+then
+    System.out.println("\nRULE 4 BACKWARDS: Patient:");
+    System.out.println($p.getFirstName() + " " + $p.getLastName());
+    System.out.println("has " + $s.getName() + ".\n");
+    modify($patients){ add($p) }
 end

@@ -1,4 +1,5 @@
 package com.ftn.sbnz.model.models;
+import org.kie.api.definition.type.Position;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +34,7 @@ public class Symptom {
 	private Long id;
 
 	@Column(name = "name", nullable = false, unique = true)
+	@Position(0)
 	private String name;
 
 	private boolean isAMentalIllness;
