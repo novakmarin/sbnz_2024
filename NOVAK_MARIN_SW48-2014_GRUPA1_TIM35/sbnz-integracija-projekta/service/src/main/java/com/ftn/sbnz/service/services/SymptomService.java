@@ -15,6 +15,7 @@ import java.util.Optional;
 public class SymptomService {
 
     private final SymptomRepository symptomRepository;
+    
 
     @Autowired
     public SymptomService(SymptomRepository symptomRepository) {
@@ -29,7 +30,7 @@ public class SymptomService {
         return symptomRepository.findById(id);
     }
 
-    public Optional<Symptom> findSymptomByName(String name) {
+    public Symptom findSymptomByName(String name) {
         return symptomRepository.findByName(name);
     }
 
@@ -37,10 +38,10 @@ public class SymptomService {
         symptomRepository.deleteById(id);
     }
 
-    // Retrieve all parent symptoms of a given symptom ID
-    public List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId) {
-        return symptomRepository.findAllParentSymptomsBySymptomId(symptomId);
-    }
+//    // Retrieve all parent symptoms of a given symptom ID
+//    public List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId) {
+//        return symptomRepository.findAllParentSymptomsBySymptomId(symptomId);
+//    }
 
     // Retrieve all child symptoms of a given symptom ID
     public List<Symptom> findAllChildSymptomsBySymptomId(Long symptomId) {

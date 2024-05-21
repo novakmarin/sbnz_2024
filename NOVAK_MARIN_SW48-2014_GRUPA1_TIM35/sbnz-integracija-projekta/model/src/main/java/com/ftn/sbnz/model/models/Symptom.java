@@ -1,6 +1,8 @@
 package com.ftn.sbnz.model.models;
+import org.kie.api.definition.type.Position;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,40 +25,45 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-
 @Entity
+@Table(name = "symptom")
 public class Symptom {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String name;
+	@Column(name = "name", nullable = false, unique = true)
+	@Position(0)
+	private String name;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+	private boolean isAMentalIllness;
+	
+	private boolean hasSpecialDiagnostics;
+
+	//@OneToMany(cascade = CascadeType.ALL)
+	//@JoinColumn(name = "parent_id")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-        name = "symptom_relations",
-        joinColumns = @JoinColumn(name = "symptom_id"),
-        inverseJoinColumns = @JoinColumn(name = "parent_symptom_id")
+        name = "symptom_relationship",
+        joinColumns = @JoinColumn(name = "parent_symptom_id"),
+        inverseJoinColumns = @JoinColumn(name = "child_symptom_id")
     )
-    private List<Symptom> parentSymptoms;
+	private List<Symptom> childSymptoms;
 
-    @ManyToMany(mappedBy = "parentSymptoms", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private List<Symptom> childSymptoms;
-    
 	public Symptom() {
 		super();
 	}
 
-	public Symptom(Long id, String name, List<Symptom> parentSymptoms, List<Symptom> childSymptoms) {
+	public Symptom(Long id, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics, List<Symptom> childSymptoms) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.parentSymptoms = parentSymptoms;
+		this.isAMentalIllness = isAMentalIllness;
+		this.hasSpecialDiagnostics = hasSpecialDiagnostics;
 		this.childSymptoms = childSymptoms;
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -73,12 +81,12 @@ public class Symptom {
 		this.name = name;
 	}
 
-	public List<Symptom> getParentSymptoms() {
-		return parentSymptoms;
+	public boolean isAMentalIllness() {
+		return isAMentalIllness;
 	}
 
-	public void setParentSymptoms(List<Symptom> parentSymptoms) {
-		this.parentSymptoms = parentSymptoms;
+	public void setAMentalIllness(boolean isAMentalIllness) {
+		this.isAMentalIllness = isAMentalIllness;
 	}
 
 	public List<Symptom> getChildSymptoms() {
@@ -88,11 +96,39 @@ public class Symptom {
 	public void setChildSymptoms(List<Symptom> childSymptoms) {
 		this.childSymptoms = childSymptoms;
 	}
+	
+	
+
+	public boolean isHasSpecialDiagnostics() {
+		return hasSpecialDiagnostics;
+	}
+
+	public void setHasSpecialDiagnostics(boolean hasSpecialDiagnostics) {
+		this.hasSpecialDiagnostics = hasSpecialDiagnostics;
+	}
 
 	@Override
 	public String toString() {
-		return "Symptom [id=" + id + ", name=" + name + ", parentSymptoms=" + parentSymptoms + ", childSymptoms="
-				+ childSymptoms + "]";
+		return "Symptom [id=" + id + ", name=" + name + ", childSymptoms=" + childSymptoms + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(childSymptoms, id, isAMentalIllness, hasSpecialDiagnostics, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Symptom other = (Symptom) obj;
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
+	}
+	
+	
 
 }

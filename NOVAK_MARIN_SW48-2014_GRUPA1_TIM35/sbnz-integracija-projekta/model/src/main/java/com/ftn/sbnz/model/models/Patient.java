@@ -58,7 +58,8 @@ public class Patient {
 	@JoinTable(name = "patient_previous_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> previousSymptoms;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "patient_current_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> currentSymptoms;
 
