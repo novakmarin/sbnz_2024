@@ -23,6 +23,7 @@ import com.ftn.sbnz.service.services.DiagnosisService;
 import com.ftn.sbnz.service.services.PatientService;
 import com.ftn.sbnz.service.services.SymptomService;
 
+//test after password change
 @RestController
 @RequestMapping("/test")
 public class TestController {
