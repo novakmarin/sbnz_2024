@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ftn.sbnz.model.models.Appointment;
+import com.ftn.sbnz.model.models.Doctor;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.service.repository.DoctorRepository;
 import com.ftn.sbnz.service.services.AppointmentService;
 import com.ftn.sbnz.service.services.DiagnosisService;
+import com.ftn.sbnz.service.services.DoctorService;
 import com.ftn.sbnz.service.services.PatientService;
 import com.ftn.sbnz.service.services.SymptomService;
 
@@ -39,6 +42,9 @@ public class TestController {
 	
 	@Autowired
 	AppointmentService appointmentService;
+	
+	@Autowired
+	DoctorService doctorService;
 	
 	@RequestMapping(value = "/complex")
 	@PermitAll
@@ -158,6 +164,15 @@ public class TestController {
 		//System.out.println(symptom);
 		ArrayList<Patient> patients = (ArrayList<Patient>) patientService.findPatientsWithSymptom(symptom);
 		return new ResponseEntity<ArrayList<Patient>>(patients, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value = "/addDoc")
+	@PermitAll
+	public ResponseEntity<Doctor> addDoc(HttpServletRequest request){
+		//System.out.println(symptom);
+		Doctor doctor = new Doctor(15L,"doca","12345","Doktor","Doktoric");
+		doctorService.createDoctor(doctor);
+		return new ResponseEntity<Doctor>(doctor, HttpStatus.CREATED);
 	}
 	
 	

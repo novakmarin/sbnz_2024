@@ -28,6 +28,10 @@ public class DiagnosisService {
     public DiagnosisService(DiagnosisRepository diagnosisRepository) {
         this.diagnosisRepository = diagnosisRepository;
     }
+    
+    public List<Diagnosis> findAllDiagnosis(){
+    	return diagnosisRepository.findAll();
+    }
 
     public Diagnosis saveDiagnosis(Diagnosis diagnosis) {
         return diagnosisRepository.save(diagnosis);

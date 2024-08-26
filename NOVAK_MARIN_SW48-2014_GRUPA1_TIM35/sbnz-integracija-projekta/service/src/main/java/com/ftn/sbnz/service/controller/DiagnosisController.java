@@ -3,6 +3,8 @@ package com.ftn.sbnz.service.controller;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,16 +31,16 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
 @RestController
 @RequestMapping("/api")
 public class DiagnosisController {
-	
+
 	@Autowired
 	DiagnosisService diagnosisService;
-	
+
 	@Autowired
 	SymptomService symptomService;
-	
+
 	@RequestMapping(value = "/test")
 	@PermitAll
-	public ResponseEntity<ArrayList<Symptom>> test(HttpServletRequest request){
+	public ResponseEntity<ArrayList<Symptom>> test(HttpServletRequest request) {
 //		Diagnosis diagnosis = new Diagnosis();
 //		Symptom symptom1 = new Symptom(null, "Nedostatak lične higijene", false, null);
 //		Symptom symptom2 = new Symptom(null, "Poteškoće sa ustajanjem iz kreveta", false, null);
@@ -105,49 +113,58 @@ public class DiagnosisController {
 //		mentalIllness2.getChildSymptoms().add(symptom24);
 //
 
-
-
-
-
-
-
-
-
-
-
-		
-		
-		
-		
-		
-		
 		ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
 		int i = 0;
-		for(Symptom s: allSymptoms) {
-			if(s.getChildSymptoms() != null) {
-				System.out.println(i +  " " + s.getChildSymptoms().size());
-			}else {
+		for (Symptom s : allSymptoms) {
+			if (s.getChildSymptoms() != null) {
+				System.out.println(i + " " + s.getChildSymptoms().size());
+			} else {
 				System.out.println(i + " " + 0);
 			}
 			i++;
 		}
-		ArrayList<String> symptomNames = new ArrayList<String>(Arrays.asList(
-				"Izbjegavanje socijalnih situacija",
-				"Znojenje",
-				"Crvenilo u licu",
-				"Ubrzan rad srca"
-				));
+		ArrayList<String> symptomNames = new ArrayList<String>(
+				Arrays.asList("Izbjegavanje socijalnih situacija", "Znojenje", "Crvenilo u licu", "Ubrzan rad srca"));
 		ArrayList<Symptom> currentSymptoms1 = new ArrayList<Symptom>();
 		for (String s : symptomNames) {
 			Symptom newSymptom = symptomService.findSymptomByName(s);
 			currentSymptoms1.add(newSymptom);
 		}
-		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null, null, null);
+		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null,
+				null, null);
 		patient.setCurrentSymptoms(currentSymptoms1);
-		
+
 		System.out.println("Radi controller!");
 		return new ResponseEntity<ArrayList<Symptom>>(allSymptoms, HttpStatus.CREATED);
 	}
-	
-	
+
+	@GetMapping
+	public List<Diagnosis> getAllDiagnoses() {
+		return diagnosisService.findAllDiagnosis();
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Diagnosis> getDiagnosisById(@PathVariable Long id) {
+		Optional<Diagnosis> diagnosis = diagnosisService.findDiagnosisById(id);
+		return diagnosis.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+	}
+
+	@PostMapping
+	public Diagnosis createDiagnosis(@RequestBody Diagnosis diagnosis) {
+		return diagnosisService.saveDiagnosis(diagnosis);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Diagnosis> updateDiagnosis(@PathVariable Long id, @RequestBody Diagnosis diagnosisDetails) {
+		Optional<Diagnosis> updatedDiagnosis = Optional.ofNullable(diagnosisService.saveDiagnosis(diagnosisDetails));
+		return updatedDiagnosis.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteDiagnosis(@PathVariable Long id) {
+		diagnosisService.deleteDiagnosis(id);
+		return ResponseEntity.noContent().build();
+	}
+
 }
