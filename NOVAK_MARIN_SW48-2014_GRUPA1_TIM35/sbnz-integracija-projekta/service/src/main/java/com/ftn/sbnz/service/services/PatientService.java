@@ -83,7 +83,7 @@ public class PatientService {
 
     // Update a patient
     @Transactional
-    public Patient updatePatient(Patient patient) {
+    public Patient updatePatient(Long id, Patient patient) {
         return patientRepository.save(patient);
     }
 

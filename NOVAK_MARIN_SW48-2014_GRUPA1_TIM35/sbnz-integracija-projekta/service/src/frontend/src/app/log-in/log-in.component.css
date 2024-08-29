@@ -50,7 +50,7 @@ body {
     box-sizing: border-box; /* Includes padding in the height calculation */
 }
 .login-form input {
-    width: 70%; /* Further narrowed */
+    width: 76%; /* Further narrowed */
     margin-bottom: 20px;
     padding: 10px;
     font-size: 16px;

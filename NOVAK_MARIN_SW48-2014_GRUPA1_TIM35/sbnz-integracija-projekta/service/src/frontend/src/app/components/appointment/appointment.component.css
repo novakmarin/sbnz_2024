@@ -1,0 +1,39 @@
+.login-form {
+    padding: 20px;
+    width: 100%; /* Adjusted to one-third */
+    background: #babababb;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Stretch to full container height */
+    box-sizing: border-box; /* Includes padding in the height calculation */
+}
+.login-form input {
+    width: 100%; /* Further narrowed */
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: black; /* Ensures placeholder text is black */
+}
+.login-form button {
+    padding: 10px;
+    height: 50%;
+    font-size: 30px;
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+    border: none;
+    width: 100%; /* Button width adjusted to match input fields */
+}
+.login-form button:hover {
+    background-color: #333;
+}
+.login-form h2 {
+    color: rgb(0, 0, 0);
+    margin-bottom: 20px;
+    text-align: left; /* Left-aligned Welcome text */
+}
+
+

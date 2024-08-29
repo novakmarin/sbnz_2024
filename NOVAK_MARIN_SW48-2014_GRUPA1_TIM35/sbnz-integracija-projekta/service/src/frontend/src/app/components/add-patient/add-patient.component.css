@@ -1,0 +1,43 @@
+.form-container {
+    max-width: 60%;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /*border-radius: 10px;*/
+  }
+
+  .form-field {
+    margin-bottom: 20px;
+  }
+
+  .form-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-field input, .form-field p-calendar {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .p-button {
+    padding-left: 33%;
+    padding-bottom: 2.5%;
+    font-size: 25px;
+    background-color: #555;
+    text-align: center;
+    height: 100%;
+    width: 100%; /* Button width adjusted to match input fields */
+  }
+
+.p-button:hover {
+    background-color: #333;
+}
+::ng-deep .p-datepicker-trigger {
+    background-color: #333; /* Change to your desired color */
+  }
