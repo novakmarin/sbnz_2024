@@ -35,12 +35,27 @@ public class PatientService {
     KieContainer kieContainer;
     
     public Patient addComplexSymptoms(Patient patient) {
+    	System.out.println("BREAK START");
+    	for(Symptom s: patient.getCurrentSymptoms()) {
+    		System.out.println(s.getName());
+    	}
+    	System.out.println("BREAK END");
     	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
     	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
     	for(Symptom s: allSymptoms) {
     		kieSession.insert(s);
     	}
+    	System.out.println("FIRST BREAK START");
+    	for(Symptom s: patient.getCurrentSymptoms()) {
+    		System.out.println(s.getName());
+    	}
+    	System.out.println("FIRST BREAK END");
     	kieSession.insert(patient);
+    	System.out.println("SECOND BREAK START");
+    	for(Symptom s: patient.getCurrentSymptoms()) {
+    		System.out.println(s.getName());
+    	}
+    	System.out.println("SECOND BREAK END");
     	kieSession.fireAllRules();
     	kieSession.dispose();
     	return patient;

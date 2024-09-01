@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -8,16 +8,43 @@ import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { SymptomService } from '../../services/symptom.service';
 import { Symptom } from '../../model/symptom';
+import { ChipsModule } from 'primeng/chips';
+import { MatChipsModule } from '@angular/material/chips';
+
+//For chips
+import {LiveAnnouncer} from '@angular/cdk/a11y';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {ChangeDetectionStrategy, computed, inject, model, signal} from '@angular/core';
+import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatIconModule} from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [FormsModule, CommonModule, MessagesModule, AutoCompleteModule],
+  imports: [FormsModule, CommonModule, MessagesModule, AutoCompleteModule, ChipsModule, MatChipsModule
+    ,MatFormFieldModule, MatIconModule, MatAutocompleteModule
+  ],
   providers: [PatientService, MessageService, SymptomService],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })
 export class AppointmentComponent {
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly currentFruit = model('');
+  readonly fruits: WritableSignal<string[]>;
+  readonly allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  readonly filteredFruits = computed(() => {
+    const currentFruit = this.currentFruit().toLowerCase();
+    return currentFruit
+      ? this.patientsSymptomsNames.filter(fruit => fruit.toLowerCase().includes(currentFruit))
+      : this.patientsSymptomsNames.slice();
+  });
+
+  readonly announcer = inject(LiveAnnouncer);
+
   jmbg: string;
   patientChoosen: boolean;
   patient: Patient;
@@ -25,10 +52,12 @@ export class AppointmentComponent {
   errorMessage: string;
   msgs: any;
   allSymptoms: Symptom[];
+  patientsSymptoms: Symptom[];
+  patientsSymptomsNames: string[] = [];
 
   items: string[] = [];
-  filteredItems: any[];
-  selectedItem: any;
+  filteredItems: string[];
+  selectedItem: string;
 
   constructor(
     private patientService: PatientService,
@@ -41,7 +70,11 @@ export class AppointmentComponent {
     this.error = '';
     this.errorMessage = '';
     this.allSymptoms = [];
+    this.patientsSymptoms = [];
     this.filteredItems = [];
+    this.selectedItem = '';
+
+    this.fruits = signal(this.patientsSymptomsNames);
 
     this.setAutocompleteItems();
   }
@@ -91,6 +124,9 @@ export class AppointmentComponent {
       complete: () => {
         console.log('Patient retrieval complete');
         this.patientChoosen = true;
+        this.patient.currentSymptoms?.forEach((symptom, index) =>{
+          this.patientsSymptomsNames.push(symptom.name);
+        });
       }
     });
   }
@@ -100,16 +136,94 @@ export class AppointmentComponent {
     this.filteredItems = this.items.filter(item => item.toLowerCase().includes(query.toLowerCase()));
   }
 
-  handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Tab') {
-      event.preventDefault(); // Prevent default tab action
-      const downArrowEvent = new KeyboardEvent('keydown', {
-        key: 'ArrowDown',
-        code: 'ArrowDown',
-        keyCode: 40, // KeyCode for down arrow
-        bubbles: true
-      });
-      event.target?.dispatchEvent(downArrowEvent);
-    }
+
+addChip(event: any) {
+  
 }
+
+onKeyDown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+      const symptom = this.allSymptoms.find(symptom => symptom.name.toLowerCase() === this.selectedItem?.toLowerCase());
+      if (symptom && !this.patient.currentSymptoms?.includes(symptom)) {
+          console.log(symptom);
+          this.patient.currentSymptoms?.push(symptom);
+          // Optionally clear the selected item after adding
+          this.patient.currentSymptoms?.forEach((symptom, index) => {
+            console.log(`Patients symptom ${index + 1}: ${symptom.name}`);
+          });
+          this.selectedItem = '';
+      }
+  }
+}
+
+onSelect(){
+  const symptom = this.allSymptoms.find(symptom => symptom.name.toLowerCase() === this.selectedItem?.toLowerCase());
+      if (symptom && !this.patient.currentSymptoms?.includes(symptom)) {
+          console.log(symptom);
+          console.log(symptom.amentalIllness);
+          this.patient.currentSymptoms?.push(symptom);
+          this.patientService.updateRecommendations(this.patient).subscribe({
+            next: (data: Patient) => {
+              this.patient = data;
+            },
+            error: (error) => {
+              console.error('Error fetching patient', error);
+              this.messageService.add({severity:'error', summary: 'Greska!', detail: this.error});
+            },
+            complete: () => {
+              console.log('Patient retrieval complete');
+              this.patientChoosen = true;
+              this.patient.currentSymptoms?.forEach((symptom, index) =>{
+              this.patientsSymptomsNames.push(symptom.name);
+              });
+            }
+          });
+          // Optionally clear the selected item after adding
+          this.patient.currentSymptoms?.forEach((symptom, index) => {
+            console.log(`Patients symptom ${index + 1}: ${symptom.name}`);
+          });
+          this.selectedItem = '';
+      }
+}
+
+add(event: MatChipInputEvent): void {
+  const value = (event.value || '').trim();
+
+  // Add our fruit
+  if (value) {
+    this.fruits.update(fruits => [...fruits, value]);
+  }
+
+  // Clear the input value
+  this.currentFruit.set('');
+}
+
+remove(fruit: string): void {
+  this.fruits.update(fruits => {
+    const index = fruits.indexOf(fruit);
+    if (index < 0) {
+      return fruits;
+    }
+
+    fruits.splice(index, 1);
+    this.announcer.announce(`Removed ${fruit}`);
+    return [...fruits];
+  });
+}
+
+selected(event: MatAutocompleteSelectedEvent): void {
+  this.fruits.update(fruits => [...fruits, event.option.viewValue]);
+  this.currentFruit.set('');
+  event.option.deselect();
+}
+
+removeChip(index: number): void {
+  this.patient.currentSymptoms?.splice(index, 1);
+}
+
+
+
+
+
+
 }

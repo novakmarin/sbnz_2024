@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ftn.sbnz.model.models.Patient;
+import com.ftn.sbnz.model.models.Symptom;
 import com.ftn.sbnz.service.services.PatientService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +64,18 @@ public class PatientController {
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient patient) {
         Patient updatedPatient = patientService.updatePatient(id, patient);
+        return updatedPatient != null ? new ResponseEntity<>(updatedPatient, HttpStatus.OK) 
+                                      : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    @PutMapping("/updateRecommendations/{id}")
+    public ResponseEntity<Patient> updateRecommendations(@PathVariable Long id, @RequestBody Patient patient) {
+//    	Patient updatedPatient = patient;
+//        updatedPatient.setCurrentSymptoms(new ArrayList<Symptom>());
+//        for(Symptom s: patient.getCurrentSymptoms()) {
+//        	updatedPatient.getCurrentSymptoms().add(s);
+//        }
+        Patient updatedPatient = patientService.addComplexSymptoms(patient);
         return updatedPatient != null ? new ResponseEntity<>(updatedPatient, HttpStatus.OK) 
                                       : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

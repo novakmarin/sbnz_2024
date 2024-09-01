@@ -38,7 +38,7 @@ body {
     margin: 0 auto; /* Centering the text container */
 }
 .login-form {
-    padding: 20px;
+    padding: 5%;
     width: 33.33%; /* Adjusted to one-third */
     background: black;
     color: white;
@@ -50,7 +50,7 @@ body {
     box-sizing: border-box; /* Includes padding in the height calculation */
 }
 .login-form input {
-    width: 76%; /* Further narrowed */
+    width: 100%; /* Further narrowed */
     margin-bottom: 20px;
     padding: 10px;
     font-size: 16px;
@@ -63,7 +63,7 @@ body {
     background-color: #555;
     color: white;
     border: none;
-    width: 76%; /* Button width adjusted to match input fields */
+    width: 100%; /* Button width adjusted to match input fields */
 }
 .login-form button:hover {
     background-color: #333;
@@ -74,11 +74,15 @@ body {
     text-align: left; /* Left-aligned Welcome text */
 }
 img {
-    width: 30%; /* Adjust image size */
+    width: 25%; /* Adjust image size */
     margin: 0 auto 5px; /* Center image horizontally */
 }
+
 .login-info p {
     font-size: 33px; /* Increased font size for the description text */
+    padding: 2%;
+    line-height: 100%;
+    width: 100%;
 }
 
 .error {

@@ -32,6 +32,9 @@ public class Symptom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name = "code", nullable = true, unique = true)
+	private String code;
 
 	@Column(name = "name", nullable = false, unique = true)
 	@Position(0)
@@ -56,9 +59,10 @@ public class Symptom {
 		super();
 	}
 
-	public Symptom(Long id, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics, List<Symptom> childSymptoms) {
+	public Symptom(Long id, String code, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics, List<Symptom> childSymptoms) {
 		super();
 		this.id = id;
+		this.code = code;
 		this.name = name;
 		this.isAMentalIllness = isAMentalIllness;
 		this.hasSpecialDiagnostics = hasSpecialDiagnostics;
@@ -96,8 +100,14 @@ public class Symptom {
 	public void setChildSymptoms(List<Symptom> childSymptoms) {
 		this.childSymptoms = childSymptoms;
 	}
-	
-	
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 	public boolean isHasSpecialDiagnostics() {
 		return hasSpecialDiagnostics;

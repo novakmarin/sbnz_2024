@@ -8,14 +8,61 @@
         
     </form>
     <div *ngIf="patientChoosen">
-        <p>{{patient.firstName}} {{patient.lastName}}</p>
-        <p-autoComplete 
-            [(ngModel)]="selectedItem" 
-            [suggestions]="filteredItems" 
-            (completeMethod)="filterItems($event)" 
-            (keydown)="handleKeydown($event)"
-            [minLength]="1" 
-            placeholder="Unesite simptom">
-        </p-autoComplete>
+        <div class="form-container">
+            <h2>Dijagnostifikovanje</h2>
+            <form (ngSubmit)="onSubmit()">
+              <div class="form-field">
+                <label>Unesite simptome:</label>
+                <p-autoComplete 
+                    name = "symptomsAutoComplete"
+                    [(ngModel)]="selectedItem" 
+                    [suggestions]="filteredItems" 
+                    (completeMethod)="filterItems($event)" 
+                    (keydown)="onKeyDown($event)"
+                    (onSelect)="onSelect()"
+                    [minLength]="1" 
+                    placeholder="Unesite simptome...">
+                </p-autoComplete>
+              </div>
+              <div class="form-field">
+                <label>Prosti simptomi: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index">
+                        <mat-basic-chip class="custom-chip"  *ngIf="chip.childSymptoms.length == 0 && !chip.amentalIllness"   removable (removed)="removeChip(i)">
+                        {{ chip.name }}
+                        <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Složeni simptomi: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index;">
+                        <mat-basic-chip class="custom-chip"  *ngIf="chip.childSymptoms.length > 0 && !chip.amentalIllness"  removable (removed)="removeChip(i)">
+                                {{ chip.name }}
+                              <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Preporučene dijagnoze: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "diagnosis-chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness">
+                                {{chip.code}} |   {{ chip.name }}
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+            </form>
+          </div>
     </div>
 </div>

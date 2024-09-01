@@ -20,4 +20,9 @@ export class PatientService {
     const url = `${this.apiUrl}/getPatientByHcidOrJmbg/${healthCardId}`;
     return this.http.get<Patient>(url);
   }
+
+  updateRecommendations(patient: Patient): Observable<Patient>{
+    const url = `${this.apiUrl}/updateRecommendations/${patient.id}`;
+    return this.http.put<Patient>(url, patient);
+  }
 }
