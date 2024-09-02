@@ -60,7 +60,7 @@
                     <mat-chip-set aria-label="Simptomi" name = "Symptoms">
                       <div class = "diagnosis-chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index;">
                         <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness">
-                                {{chip.code}} |   {{ chip.name }}
+                                {{chip.code}} |   {{ chip.name }} | +
                         </mat-basic-chip>
                       </div>
                     </mat-chip-set>

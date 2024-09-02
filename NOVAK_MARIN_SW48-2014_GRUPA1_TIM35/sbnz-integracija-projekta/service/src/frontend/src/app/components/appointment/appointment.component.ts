@@ -173,16 +173,7 @@ addChip(event: any) {
 
 onKeyDown(event: KeyboardEvent) {
   if (event.key === 'Enter') {
-      const symptom = this.allSymptoms.find(symptom => symptom.name.toLowerCase() === this.selectedItem?.toLowerCase());
-      if (symptom && !this.patient.currentSymptoms?.includes(symptom)) {
-          console.log(symptom);
-          this.patient.currentSymptoms?.push(symptom);
-          // Optionally clear the selected item after adding
-          this.patient.currentSymptoms?.forEach((symptom, index) => {
-            console.log(`Patients symptom ${index + 1}: ${symptom.name}`);
-          });
-          this.selectedItem = '';
-      }
+      this.onSelect();
   }
 }
 
