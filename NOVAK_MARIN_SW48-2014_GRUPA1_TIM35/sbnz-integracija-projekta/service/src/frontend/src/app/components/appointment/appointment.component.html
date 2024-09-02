@@ -2,7 +2,7 @@
     <form *ngIf = "!patientChoosen" #loginForm="ngForm" (ngSubmit)="onSubmit()">
         <h2>Unesite broj zdravstvene knjižice ili JMBG pacijenta</h2>
         <input type="text" id="jmbg" name="jmbg" placeholder="JMBG ili KZO broj" [(ngModel)]="jmbg" required>
-        <button pButton type="submit" label = "Login" [disabled]="!loginForm.form.valid" >Započni pregled</button>
+        <button pButton type="submit" label="Započni pregled" [disabled]="!loginForm.form.valid" ></button>
         <p-messages [(value)]="msgs"></p-messages>
         <div *ngIf="error" class="error">{{error}}</div>
         
@@ -10,7 +10,11 @@
     <div *ngIf="patientChoosen">
         <div class="form-container">
             <h2>Dijagnostifikovanje</h2>
-            <form (ngSubmit)="onSubmit()">
+            <form (ngSubmit)="onAppointmentSubmit()">
+              <div class="form-field">
+                <label>Datum (demo):</label>
+                <p-calendar name ="appointmentDate" id="date" placeholder="Unesite datum pregleda" showIcon="true" [(ngModel)] = "appointment.date"></p-calendar>
+              </div>
               <div class="form-field">
                 <label>Unesite simptome:</label>
                 <p-autoComplete 
@@ -62,6 +66,17 @@
                     </mat-chip-set>
                 </div>
               </div>
+              <div class="form-field">
+                <label>Naponeme: </label>
+                <textarea 
+                    name = "noteArea"
+                    rows="5"
+                    cols="90" 
+                    pInputTextarea 
+                    [(ngModel)]="appointment.note">
+                </textarea>
+              </div>
+              <button name="saveAppointment" label="Sačuvaj i završi pregled" pButton type="submit" class="p-button p-component"></button>
             </form>
           </div>
     </div>

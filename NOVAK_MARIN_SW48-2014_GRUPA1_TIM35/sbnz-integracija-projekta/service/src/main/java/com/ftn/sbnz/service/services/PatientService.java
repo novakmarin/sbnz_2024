@@ -99,7 +99,15 @@ public class PatientService {
     // Update a patient
     @Transactional
     public Patient updatePatient(Long id, Patient patient) {
-        return patientRepository.save(patient);
+    	Optional<Patient> updatedPatientOpt = patientRepository.findById(id);
+    	List<Symptom> newSymptoms = new ArrayList<Symptom>();
+    	for(Symptom s: patient.getCurrentSymptoms()) {
+    		Symptom s1 = symptomService.findSymptomByName(s.getName());
+    		newSymptoms.add(s1);
+    	}
+    	Patient updatedPatient = updatedPatientOpt.get();
+    	updatedPatient.setCurrentSymptoms(newSymptoms);
+        return patientRepository.save(updatedPatient);
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Appointment;
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.service.repository.AppointmentRepository;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ import java.util.Optional;
 @Transactional
 public class AppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
+	@Autowired
+    private AppointmentRepository appointmentRepository;
     
     @Autowired
     PatientService patientService;
@@ -29,28 +31,34 @@ public class AppointmentService {
     
     @Autowired
     KieContainer kieContainer;
-
-    @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository) {
-        this.appointmentRepository = appointmentRepository;
-    }
     
-
     public Appointment saveAppointment(Appointment appointment) {
-    
+    	List<Symptom> symptoms = new ArrayList<Symptom>();
+    	for(Symptom s: appointment.getPatient().getCurrentSymptoms()) {
+    		symptoms.add(symptomService.findSymptomByName(s.getName()));
+    	}
+    	appointment.setCurrentSymptoms(symptoms);
+    	Patient patient = patientService.getPatientById(appointment.getPatient().getId()).get();
+    	patient.setCurrentSymptoms(symptoms);
+    	appointment.setPatient(patient);
+    	
         return appointmentRepository.save(appointment);
     }
     
     public Appointment fireRules(Appointment appointment) {
     	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
-    	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
-    	ArrayList<Appointment> allAppointments = (ArrayList<Appointment>) appointmentRepository.findAll();
+    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
+    	List<Appointment> allAppointments = this.findAllAppointments();
     	for(Symptom s: allSymptoms) {
     		kieSession.insert(s);
     	}
     	for(Appointment a: allAppointments) {
+    		System.out.println("APPOINTMENTS START");
+    		System.out.println(a.getDate().toString());
+    		System.out.println("APPOINTMENTS END");
     		kieSession.insert(a);
     	}
+
     	kieSession.insert(appointment);
     	kieSession.insert(appointment.getPatient());
     	kieSession.fireAllRules();

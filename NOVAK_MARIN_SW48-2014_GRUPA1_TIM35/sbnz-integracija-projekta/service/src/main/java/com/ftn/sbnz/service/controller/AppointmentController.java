@@ -1,7 +1,10 @@
 package com.ftn.sbnz.service.controller;
 
 import com.ftn.sbnz.model.models.Appointment;
+import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.service.services.AppointmentService;
+import com.ftn.sbnz.service.services.PatientService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/appointments")
+@RequestMapping("/appointments")
 public class AppointmentController {
 
 	@Autowired
 	private AppointmentService appointmentService;
+	
+	@Autowired
+	private PatientService patientService;
 
 	@GetMapping
 	public List<Appointment> getAllAppointments() {
@@ -29,8 +35,12 @@ public class AppointmentController {
 	}
 
 	@PostMapping
-	public Appointment createAppointment(@RequestBody Appointment appointment) {
-		return appointmentService.saveAppointment(appointment);
+	public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
+		System.out.println("PRIJE");
+		patientService.updatePatient(appointment.getPatient().getId(), appointment.getPatient());
+		System.out.println("POSLIJE");
+		Appointment savedAppointment = appointmentService.saveAppointment(appointment);
+		return ResponseEntity.ok(savedAppointment);
 	}
 
 	@PutMapping("/{id}")
@@ -41,6 +51,18 @@ public class AppointmentController {
 		return updatedAppointment.map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
+	
+    @PutMapping("/updateRecommendations/{id}")
+    public ResponseEntity<Appointment> updateRecommendations(@PathVariable Long id, @RequestBody Appointment appointment) {
+//    	Patient updatedPatient = patient;
+//        updatedPatient.setCurrentSymptoms(new ArrayList<Symptom>());
+//        for(Symptom s: patient.getCurrentSymptoms()) {
+//        	updatedPatient.getCurrentSymptoms().add(s);
+//        }
+        Appointment updatedAppointment = appointmentService.fireRules(appointment);
+        return updatedAppointment != null ? new ResponseEntity<>(updatedAppointment, HttpStatus.OK) 
+                                      : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {

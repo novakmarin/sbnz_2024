@@ -19,15 +19,19 @@ import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/mate
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
+import { Appointment } from '../../model/appointment';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { AppointmentService } from '../../services/appointment.service';
 
 
 @Component({
   selector: 'app-appointment',
   standalone: true,
   imports: [FormsModule, CommonModule, MessagesModule, AutoCompleteModule, ChipsModule, MatChipsModule
-    ,MatFormFieldModule, MatIconModule, MatAutocompleteModule
+    ,MatFormFieldModule, MatIconModule, MatAutocompleteModule, CalendarModule, InputTextareaModule
   ],
-  providers: [PatientService, MessageService, SymptomService],
+  providers: [PatientService, MessageService, SymptomService, AppointmentService],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })
@@ -45,6 +49,7 @@ export class AppointmentComponent {
 
   readonly announcer = inject(LiveAnnouncer);
 
+  appointment: Appointment;
   jmbg: string;
   patientChoosen: boolean;
   patient: Patient;
@@ -62,7 +67,8 @@ export class AppointmentComponent {
   constructor(
     private patientService: PatientService,
     private symptomService: SymptomService, 
-    private messageService: MessageService)
+    private messageService: MessageService,
+    private appointmentService: AppointmentService)
   {
     this.jmbg = '';
     this.patientChoosen = false;
@@ -73,6 +79,9 @@ export class AppointmentComponent {
     this.patientsSymptoms = [];
     this.filteredItems = [];
     this.selectedItem = '';
+    this.appointment = new Appointment();
+    this.appointment.id = 100;
+    this.appointment.date = new Date();
 
     this.fruits = signal(this.patientsSymptomsNames);
 
@@ -111,10 +120,31 @@ export class AppointmentComponent {
     this.getPatient(this.jmbg);
   }
 
+  onAppointmentSubmit(): void{
+    this.saveAppointment();
+  }
+
+  saveAppointment(): void{
+    this.appointmentService.createAppointment(this.appointment).subscribe({
+      next: (data: Appointment) => {
+        this.appointment = data;
+      },
+      error: (error) => {
+        console.error('Error saving appointment', error);
+        this.messageService.add({severity:'error', summary: 'Greska!', detail: this.error});
+      },
+      complete: () => {
+        console.log('Appointment saved successfully');
+        this.patientChoosen = true;
+      }
+    });
+  }
+
   getPatient(healthCardId: string): void {
     this.patientService.getPatientByHealthCardId(healthCardId).subscribe({
       next: (data: Patient) => {
         this.patient = data;
+        this.appointment.patient = this.patient;
       },
       error: (error) => {
         console.error('Error fetching patient', error);
@@ -156,15 +186,17 @@ onKeyDown(event: KeyboardEvent) {
   }
 }
 
-onSelect(){
+/* onSelect(){
   const symptom = this.allSymptoms.find(symptom => symptom.name.toLowerCase() === this.selectedItem?.toLowerCase());
       if (symptom && !this.patient.currentSymptoms?.includes(symptom)) {
           console.log(symptom);
           console.log(symptom.amentalIllness);
           this.patient.currentSymptoms?.push(symptom);
+          this.appointment.currentSymptoms = this.patient.currentSymptoms;
           this.patientService.updateRecommendations(this.patient).subscribe({
             next: (data: Patient) => {
               this.patient = data;
+              this.appointment.patient = this.patient;
             },
             error: (error) => {
               console.error('Error fetching patient', error);
@@ -173,18 +205,38 @@ onSelect(){
             complete: () => {
               console.log('Patient retrieval complete');
               this.patientChoosen = true;
-              this.patient.currentSymptoms?.forEach((symptom, index) =>{
-              this.patientsSymptomsNames.push(symptom.name);
-              });
             }
           });
           // Optionally clear the selected item after adding
-          this.patient.currentSymptoms?.forEach((symptom, index) => {
-            console.log(`Patients symptom ${index + 1}: ${symptom.name}`);
-          });
           this.selectedItem = '';
       }
-}
+} */
+
+  onSelect(){
+    const symptom = this.allSymptoms.find(symptom => symptom.name.toLowerCase() === this.selectedItem?.toLowerCase());
+        if (symptom && !this.patient.currentSymptoms?.includes(symptom)) {
+            console.log(symptom);
+            console.log(symptom.amentalIllness);
+            this.patient.currentSymptoms?.push(symptom);
+            this.appointment.currentSymptoms = this.patient.currentSymptoms;
+            this.appointmentService.updateRecommendations(this.appointment).subscribe({
+              next: (data: Appointment) => {
+                this.appointment = data;
+                this.patient = this.appointment.patient as Patient;
+              },
+              error: (error) => {
+                console.error('Error updating appointment', error);
+                this.messageService.add({severity:'error', summary: 'Greska!', detail: this.error});
+              },
+              complete: () => {
+                console.log('Appointment update complete');
+                this.patientChoosen = true;
+              }
+            });
+            // Optionally clear the selected item after adding
+            this.selectedItem = '';
+        }
+  }
 
 add(event: MatChipInputEvent): void {
   const value = (event.value || '').trim();

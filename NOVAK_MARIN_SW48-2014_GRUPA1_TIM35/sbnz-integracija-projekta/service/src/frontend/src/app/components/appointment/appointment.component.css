@@ -126,6 +126,10 @@
     font-size: 16px;
   }
 
+  ::ng-deep .p-datepicker-trigger {
+    background-color: #333; /* Change to your desired color */
+  }
+
 
 
 
