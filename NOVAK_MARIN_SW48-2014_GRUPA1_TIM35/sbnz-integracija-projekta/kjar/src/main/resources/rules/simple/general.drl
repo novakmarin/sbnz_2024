@@ -29,11 +29,14 @@ when
 	$patient : Patient($patientSymptoms : currentSymptoms)
     $symptom : Symptom(name == "Anksioznost") from $patientSymptoms
     
-    $appointment : Appointment(patient == $patient, 
-                               date.before(monthsAgo(-6)) == true,
+    $appointment1: Appointment(patient == $patient, $id1 : id, $date1: date)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,
+    						   date.before($date1) == true,	
+                               date.before(monthsAgo(6)) == true,
                                currentSymptoms != null,
-                               currentSymptoms.size() > 0)
-                               
+                               currentSymptoms.size() > 0) 
+                            
     $oldSymptom : Symptom(name == "Anksioznost") from $appointment.currentSymptoms
 
     //$otherSymptom : Symptom(name != "Anksioznost") from $gadSymptom.childSymptoms
@@ -42,7 +45,7 @@ when
     not Symptom(id == $gadSymptom.id) from $appointment.currentSymptoms
     
     $sNo: Number(intValue >= 2) from accumulate(
-        $s1: Symptom(name != "Anksioznost") from $patient.currentSymptoms,
+        $s1: Symptom(name != "Anksioznost") from $appointment1.currentSymptoms,
         init(int count = 0;),
         action( if ($gadSymptom.getChildSymptoms().contains($s1)) count++;),
         result(count)
@@ -116,4 +119,22 @@ then
     System.out.println($p.getFirstName() + " " + $p.getLastName());
     System.out.println("has " + $s.getName() + ".\n");
     modify($patients){ add($p) }
+end
+
+
+rule "Test Rule"
+when
+	$gadSymptom : Symptom(name == "Generalizovani anksiozni poremećaj")
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    $symptom : Symptom(name == "Anksioznost") from $patientSymptoms
+    
+    $appointment1: Appointment(patient == $patient, $id1 : id)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,	
+                               date.before(monthsAgo(6)) == true) 
+
+then
+    System.out.println("AKTIVIRALO SE TEST PRAVILO ");
+ 
 end

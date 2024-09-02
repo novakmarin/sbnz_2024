@@ -33,6 +33,10 @@ public class SymptomService {
     public Symptom findSymptomByName(String name) {
         return symptomRepository.findByName(name);
     }
+    
+    public Symptom findSymptomByCode(String code) {
+    	return symptomRepository.findByCode(code);
+    }
 
     public void deleteSymptom(Long id) {
         symptomRepository.deleteById(id);

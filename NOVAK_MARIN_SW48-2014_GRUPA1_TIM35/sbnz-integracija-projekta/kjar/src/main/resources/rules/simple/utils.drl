@@ -16,3 +16,30 @@ function Date daysAgo(Integer days){
 	newCal.add(Calendar.DATE, days);
 	return newCal.getTime();
 }
+
+function boolean isSameDate(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+
+        // Set the time of both calendars to the provided dates
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+
+        // Set the time components of both calendars to zero
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
+
+        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.set(Calendar.MINUTE, 0);
+        cal2.set(Calendar.SECOND, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+
+        // Compare the dates
+        return cal1.getTime().equals(cal2.getTime());
+    }
+
+    function boolean isToday(Date date) {
+        return isSameDate(date, new Date());
+    }

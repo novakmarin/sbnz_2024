@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface SymptomRepository extends JpaRepository<Symptom, Long> {
 
     Symptom findByName(String name);
+    
+    Symptom findByCode(String code);
 
 //    // Fetch all symptoms that are parents of a given symptom ID
 //    @Query("SELECT s.parentSymptoms FROM Symptom s WHERE s.id = :symptomId")

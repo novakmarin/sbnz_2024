@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Patient</title>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Dodavanje novog pacijenta</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-field">
+        <label for="firstName">Ime</label>
+        <input pInputText type="text" id="firstName" name = "firstName" [(ngModel)] = "patient.firstName" placeholder="Unesite ime pacijenta">
+      </div>
+      <div class="form-field">
+        <label for="lastName">Prezime</label>
+        <input pInputText type="text" id="lastName" name = "lastName" [(ngModel)] = "patient.lastName" placeholder="Unesite prezime pacijenta">
+      </div>
+      <div class="form-field">
+        <label for="dob">Datum rođenja</label>
+        <p-calendar id="dob" placeholder="Odaberite datum rođenja" name = "dob" showIcon="true" [(ngModel)] = "patient.dob"></p-calendar>
+      </div>
+      <div class="form-field">
+        <label for="healthCardId">Broj zdravstvene knjižice</label>
+        <input pInputText type="text" id="healthCardId" name = "healthCardId" [(ngModel)] = "patient.healthCardId" placeholder="Unesite broj zdravstvene knjižice pacijenta">
+      </div>
+      <button pButton type="submit" class="p-button p-component">Dodaj pacijenta</button>
+    </form>
+  </div>
+</body>
+</html>
