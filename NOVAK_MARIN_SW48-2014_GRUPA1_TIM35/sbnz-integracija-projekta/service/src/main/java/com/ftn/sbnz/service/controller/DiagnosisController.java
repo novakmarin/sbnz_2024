@@ -131,7 +131,7 @@ public class DiagnosisController {
 			currentSymptoms1.add(newSymptom);
 		}
 		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null,
-				null, null);
+				null, null, null);
 		patient.setCurrentSymptoms(currentSymptoms1);
 
 		System.out.println("Radi controller!");

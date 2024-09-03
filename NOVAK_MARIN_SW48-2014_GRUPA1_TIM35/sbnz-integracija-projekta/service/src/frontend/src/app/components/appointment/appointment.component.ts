@@ -205,7 +205,7 @@ onKeyDown(event: KeyboardEvent) {
 
   onSelect(){
     const symptom = this.allSymptoms.find(symptom => symptom.name.toLowerCase() === this.selectedItem?.toLowerCase());
-        if (symptom && !this.patient.currentSymptoms?.includes(symptom)) {
+        if (symptom && !this.patient.currentSymptoms?.some(symptom1 => symptom1.name === symptom.name)) {
             console.log(symptom);
             console.log(symptom.amentalIllness);
             this.patient.currentSymptoms?.push(symptom);
@@ -227,6 +227,10 @@ onKeyDown(event: KeyboardEvent) {
             // Optionally clear the selected item after adding
             this.selectedItem = '';
         }
+  }
+
+  onChipClick(symptom: Symptom){
+    this.appointment?.patient?.diagnosis?.push(symptom);
   }
 
 add(event: MatChipInputEvent): void {
@@ -262,6 +266,10 @@ selected(event: MatAutocompleteSelectedEvent): void {
 
 removeChip(index: number): void {
   this.patient.currentSymptoms?.splice(index, 1);
+}
+
+removeDiagnosis(index: number): void {
+  this.patient.diagnosis?.splice(index, 1);
 }
 
 

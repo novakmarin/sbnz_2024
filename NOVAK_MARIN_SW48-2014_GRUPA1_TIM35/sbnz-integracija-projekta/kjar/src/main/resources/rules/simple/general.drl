@@ -32,8 +32,7 @@ when
     $appointment1: Appointment(patient == $patient, $id1 : id, $date1: date)
     $appointment : Appointment(patient == $patient,
     						   id != $id1,
-    						   date.before($date1) == true,	
-                               date.before(monthsAgo(6)) == true,
+    						   date.before(minusMonths($date1, 6)) == true,	
                                currentSymptoms != null,
                                currentSymptoms.size() > 0) 
                             

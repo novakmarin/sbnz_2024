@@ -34,12 +34,17 @@ public class AppointmentService {
     
     public Appointment saveAppointment(Appointment appointment) {
     	List<Symptom> symptoms = new ArrayList<Symptom>();
+    	List<Symptom> diagnosis = new ArrayList<Symptom>();
     	for(Symptom s: appointment.getPatient().getCurrentSymptoms()) {
     		symptoms.add(symptomService.findSymptomByName(s.getName()));
+    	}
+    	for(Symptom s: appointment.getPatient().getDiagnosis()) {
+    		diagnosis.add(symptomService.findSymptomByName(s.getName()));
     	}
     	appointment.setCurrentSymptoms(symptoms);
     	Patient patient = patientService.getPatientById(appointment.getPatient().getId()).get();
     	patient.setCurrentSymptoms(symptoms);
+    	patient.setDiagnosis(diagnosis);
     	appointment.setPatient(patient);
     	
         return appointmentRepository.save(appointment);

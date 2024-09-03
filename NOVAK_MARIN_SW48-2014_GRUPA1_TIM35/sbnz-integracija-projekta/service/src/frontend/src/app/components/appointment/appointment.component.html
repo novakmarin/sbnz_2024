@@ -12,6 +12,24 @@
             <h2>Dijagnostifikovanje</h2>
             <form (ngSubmit)="onAppointmentSubmit()">
               <div class="form-field">
+                <div class = "patient-data">
+                    <div>
+                        <label>Pacijent: </label>
+                        <p>{{patient.firstName}} {{patient.lastName}}</p>
+                    </div>
+                    <div>
+                        <label>Datum rođenja: </label>
+                        <p>{{patient.dob | date:'dd.MM.yyyy.'}}</p>
+                    </div>
+                    <div>
+                      <div>
+                        <label>Broj zdravstvene knjižice: </label>
+                        <p>{{patient.healthCardId}}</p>
+                    </div>
+                    </div>
+                </div>
+              </div>
+              <div class="form-field">
                 <label>Datum (demo):</label>
                 <p-calendar name ="appointmentDate" id="date" placeholder="Unesite datum pregleda" showIcon="true" [(ngModel)] = "appointment.date"></p-calendar>
               </div>
@@ -57,10 +75,23 @@
               <div class="form-field">
                 <label>Preporučene dijagnoze: </label>
                 <div>
-                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms" >
                       <div class = "diagnosis-chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index;">
-                        <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness">
+                        <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness" (click) = "onChipClick(chip)">
                                 {{chip.code}} |   {{ chip.name }} | +
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Zaključena dijagnoza: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "diagnosis-chip-border" *ngFor="let chip of patient.diagnosis; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip-final"  *ngIf="chip.amentalIllness" removable (removed)="removeDiagnosis(i)">
+                                {{chip.code}} |   {{ chip.name }}
+                                <button matChipRemove>&times;</button>
                         </mat-basic-chip>
                       </div>
                     </mat-chip-set>
