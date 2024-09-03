@@ -1,5 +1,5 @@
 <mat-card>
-    <label>Unesite simptome:</label>
+    <label>Unesite simptom:</label>
                 <p-autoComplete 
                     name = "symptomsAutoComplete"
                     [(ngModel)]="selectedItem" 
@@ -8,7 +8,7 @@
                     (keydown)="onKeyDown($event)"
                     (onSelect)="onSelect()"
                     [minLength]="1" 
-                    placeholder="Unesite simptome...">
+                    placeholder="Unesite simptom...">
                 </p-autoComplete>
     <mat-card-title>Pacijenti sa (potencijalnim) simptomom: {{symptomName}}</mat-card-title>
     <mat-card-content>
@@ -44,6 +44,14 @@
           <td mat-cell *matCellDef="let patient">
             <ul>
               <li *ngFor="let symptom of patient.currentSymptoms">{{ symptom.name }}</li>
+            </ul>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="diagnosis">
+          <th mat-header-cell *matHeaderCellDef> Dijagnoza </th>
+          <td mat-cell *matCellDef="let patient">
+            <ul>
+              <li *ngFor="let symptom of patient.diagnosis">{{ symptom.name }}</li>
             </ul>
           </td>
         </ng-container>

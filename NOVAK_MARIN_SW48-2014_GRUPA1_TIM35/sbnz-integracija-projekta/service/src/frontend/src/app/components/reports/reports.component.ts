@@ -29,7 +29,7 @@ import { SymptomService } from '../../services/symptom.service';
 export class ReportsComponent {
 
   patients: Patient[];
-  displayedColumns: string[] = ['healthCardId', 'firstName', 'lastName', 'dob', 'currentSymptoms'];
+  displayedColumns: string[] = ['healthCardId', 'firstName', 'lastName', 'dob', 'currentSymptoms', 'diagnosis'];
   symptomName: string;
   symptomSelected: boolean;
   items: string[] = [];
