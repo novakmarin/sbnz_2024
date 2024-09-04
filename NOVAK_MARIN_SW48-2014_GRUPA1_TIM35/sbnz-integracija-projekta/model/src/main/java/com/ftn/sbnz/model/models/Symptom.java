@@ -124,7 +124,7 @@ public class Symptom {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(childSymptoms, id, isAMentalIllness, hasSpecialDiagnostics, name);
+		return Objects.hash(id, name);
 	}
 
 	@Override
@@ -138,6 +138,8 @@ public class Symptom {
 		Symptom other = (Symptom) obj;
 		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
+
+	
 	
 	
 

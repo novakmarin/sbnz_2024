@@ -17,6 +17,13 @@ function Date minusMonths(Date date, Integer months) {
         return calendar.getTime();
 }
 
+function Date minusDays(Date date, Integer days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR, -days);
+        return calendar.getTime();
+}
+
 function Date daysAgo(Integer days){
 	Calendar newCal = Calendar.getInstance();
 	newCal.setTime(new Date());

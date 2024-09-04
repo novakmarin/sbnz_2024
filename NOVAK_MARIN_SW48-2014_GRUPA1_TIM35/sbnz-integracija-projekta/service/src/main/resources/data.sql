@@ -32,14 +32,14 @@ VALUES
 ('Symptom', 23, NULL, false, false, 'Suicidalnost'),
 ('Symptom', 24, NULL, false, false, 'Smanjena koncentracija'),
 ('Symptom', 25, NULL, false, false, 'Povećana motivacija'),
-('Symptom', 26, NULL, false, false, 'Manjak volje'),
-('Symptom', 27, NULL, false, false, 'Halucinacije'),
+('Symptom', 26, NULL, true, false, 'Manjak volje'),
+('Symptom', 27, NULL, true, false, 'Halucinacije'),
 ('Symptom', 28, NULL, false, false, 'Strah od socijalnih situacija'),
-('Symptom', 29, NULL, false, false, 'Problemi sa snom'),
+('Symptom', 29, NULL, true, false, 'Problemi sa snom'),
 ('Symptom', 30, NULL, false, false, 'Anksioznost'),
 ('Symptom', 31, NULL, false, false, 'Manjak energije'),
 ('Symptom', 32, 'F40.11', false, true,  'Socijalna anksioznost'),
-('Symptom', 33, 'F32', false, true,  'Depresivni poremećaj'),
+('Symptom', 33, NULL, true, false,  'Depresija'),
 ('Symptom', 34, NULL, false, false, 'Briga'),
 ('Symptom', 35, NULL, false, false, 'Zamor'),
 ('Symptom', 36, NULL, false, false, 'Razdražljivost'),
@@ -49,7 +49,16 @@ VALUES
 ('Symptom', 40, NULL, false, false, 'Pretjerana razgovorljivost'),
 ('Symptom', 41, NULL, false, false, 'Ubrzane misli'),
 ('Symptom', 42, NULL, false, false, 'Nestabilna pažnja'),
-('Symptom', 43, NULL, false, false, 'Višak energije');
+('Symptom', 43, NULL, false, false, 'Višak energije'),
+('Symptom', 44, NULL, true, false, 'Nepovezano mišljenje i govor'),
+('Symptom', 45, 'F32', true, true,  'Depresivni poremećaj'),
+('Symptom', 46, 'F31', true, true,  'Bipolarni afektivni poremećaj'),
+('Symptom', 47, 'F20', true, true,  'Shizofrenija'),
+('Symptom', 48, 'F25', true, true,  'Shizoafektivni poremećaj'),
+('Symptom', 49, NULL , false,false,  'Deluzije'),
+('Symptom', 50, NULL , false,false,  'Katatonija'),
+('Symptom', 51, NULL , true,false,  'Negativni simptomi'),
+('Symptom', 52, NULL , false,false,  'Anhedonija');
 
 -- Inserts for symptom_relationship table (unchanged)
 INSERT INTO symptom_relationship (parent_symptom_id, child_symptom_id) 
@@ -81,6 +90,7 @@ VALUES
 (33, 29),
 (33, 23),
 (33, 24),
+(33, 52),
 (37, 30),
 (37, 24),
 (37, 35),
@@ -91,7 +101,22 @@ VALUES
 (38, 42),
 (38, 43),
 (38, 3),
-(38, 25);
+(38, 25),
+(44, 12),
+(44, 13),
+(44, 14),
+(44, 11),
+(46, 33),
+(46, 38),
+(47, 49),
+(47, 27),
+(47, 44),
+(47, 50),
+(47, 51),
+(49, 39),
+(51, 11),
+(51, 52);
+
 
 -- Inserts for patient table
 INSERT INTO patient(id, dob, first_name, health_card_id, last_name) 
