@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.*;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.Symptom;
 import com.ftn.sbnz.service.services.PatientService;
+import com.ftn.sbnz.service.services.SymptomService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.security.PermitAll;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/patients")
@@ -19,6 +23,9 @@ public class PatientController {
 
     @Autowired
     private PatientService patientService;
+    
+    @Autowired
+    private SymptomService symptomService;
 
     // Create a new patient
     @PostMapping
@@ -79,6 +86,14 @@ public class PatientController {
         return updatedPatient != null ? new ResponseEntity<>(updatedPatient, HttpStatus.OK) 
                                       : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    
+    @GetMapping("/getPatientsWithSymptom/{symptomName}")
+	public ResponseEntity<List<Patient>> testBackwards(@PathVariable String symptomName){
+		Symptom symptom = symptomService.findSymptomByName(symptomName);		
+		//System.out.println(symptom);
+		List<Patient> patients = patientService.findPatientsWithSymptom(symptom);
+		return new ResponseEntity<List<Patient>>(patients, HttpStatus.CREATED);
+	}
 
     // Delete a patient
     @DeleteMapping("/{id}")

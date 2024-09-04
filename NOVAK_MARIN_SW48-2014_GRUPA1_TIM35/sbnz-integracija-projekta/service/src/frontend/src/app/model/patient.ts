@@ -27,7 +27,8 @@ export class Patient {
     public currentDiagnosis?: Diagnosis[],
     public currentTherapies?: Therapy[],
     public previousSymptoms?: Symptom[],
-    public currentSymptoms?: Symptom[]
+    public currentSymptoms?: Symptom[],
+    public diagnosis?: Symptom[]
   ) {
     /* this.id = id;
     this.healthCardId = healthCardId;

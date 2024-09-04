@@ -71,7 +71,7 @@ public class TestController {
 		}
 		
 		
-		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null, null, null);
+		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null, null, null, null);
 		patient.setCurrentSymptoms(currentSymptoms1);
 		patient = patientService.addComplexSymptoms(patient);
 		
@@ -103,7 +103,7 @@ public class TestController {
 		}
 		
 		
-		Patient patient = new Patient(1L, "QWER120", "Stevan", "Stevanović", new Date(1980, 6, 2), null, null, null, null, null, null);
+		Patient patient = new Patient(1L, "QWER120", "Stevan", "Stevanović", new Date(1980, 6, 2), null, null, null, null, null, null, null);
 		patient.setCurrentSymptoms(currentSymptoms1);
 		patient = patientService.addComplexSymptoms(patient);
 		
@@ -136,7 +136,7 @@ public class TestController {
         calendar.set(Calendar.MONTH, Calendar.JUNE);
         calendar.set(Calendar.DAY_OF_MONTH, 2);
         Date dob = calendar.getTime();
-		Patient patientGAD = new Patient(null, "QWER122", "Marko", "Markovic", dob, null, null, null, null, null, null);
+		Patient patientGAD = new Patient(null, "QWER122", "Marko", "Markovic", dob, null, null, null, null, null, null, null);
 		patientGAD.setCurrentSymptoms(previousSymptoms1);
 		//patientService.createPatient(patientGAD);
 		
@@ -213,11 +213,11 @@ public class TestController {
 			previousSymptoms1.add(newSymptom);
 		}
 		
-		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null, null, null);
+		Patient patient = new Patient(1L, "QWER123", "Petar", "Petrovic", new Date(1980, 6, 2), null, null, null, null, null, null, null);
 		//patient.setCurrentSymptoms(currentSymptoms1);
 		//patient = patientService.addComplexSymptoms(patient);
 		
-		Patient patientGAD = new Patient(null, "QWER122", "Marko", "Markovic", new Date(1984, 6, 2), null, null, null, null, null, null);
+		Patient patientGAD = new Patient(null, "QWER122", "Marko", "Markovic", new Date(1984, 6, 2), null, null, null, null, null, null, null);
 		patientGAD.setCurrentSymptoms(previousSymptoms1);
 		//patientService.createPatient(patientGAD);
 		

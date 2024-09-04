@@ -25,4 +25,9 @@ export class PatientService {
     const url = `${this.apiUrl}/updateRecommendations/${patient.id}`;
     return this.http.put<Patient>(url, patient);
   }
+
+  getPatientsWithSymptom(symptomName: string): Observable<Patient[]> {
+    const url = `${this.apiUrl}/getPatientsWithSymptom/${symptomName}`;
+    return this.http.get<Patient[]>(url);
+  }
 }

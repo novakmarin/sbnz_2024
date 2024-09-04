@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
   ]
 })
 export class AddPatientComponent {
-  patient = new Patient(0,"","","",new Date(), [], [], [], [], [], []);
+  patient = new Patient(0,"","","",new Date(), [], [], [], [], [], [], []);
   
   constructor(private patientService: PatientService, private router: Router) {}
 

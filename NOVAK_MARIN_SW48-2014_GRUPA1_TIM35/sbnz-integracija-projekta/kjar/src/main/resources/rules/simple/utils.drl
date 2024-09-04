@@ -10,6 +10,13 @@ function Date monthsAgo(Integer months){
 	return newCal.getTime();
 }
 
+function Date minusMonths(Date date, Integer months) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, -months);
+        return calendar.getTime();
+}
+
 function Date daysAgo(Integer days){
 	Calendar newCal = Calendar.getInstance();
 	newCal.setTime(new Date());

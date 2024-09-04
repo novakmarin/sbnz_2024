@@ -1,1 +1,64 @@
-<p>reports works!</p>
+<mat-card>
+    <label>Unesite simptom:</label>
+                <p-autoComplete 
+                    name = "symptomsAutoComplete"
+                    [(ngModel)]="selectedItem" 
+                    [suggestions]="filteredItems" 
+                    (completeMethod)="filterItems($event)" 
+                    (keydown)="onKeyDown($event)"
+                    (onSelect)="onSelect()"
+                    [minLength]="1" 
+                    placeholder="Unesite simptom...">
+                </p-autoComplete>
+    <mat-card-title>Pacijenti sa (potencijalnim) simptomom: {{symptomName}}</mat-card-title>
+    <mat-card-content>
+      <table mat-table [dataSource]="patients" class="mat-elevation-z8">
+  
+        <!-- Health Card ID Column -->
+        <ng-container matColumnDef="healthCardId">
+            <th mat-header-cell *matHeaderCellDef> Br. zdravstvene knjižice</th>
+            <td mat-cell *matCellDef="let patient"> {{ patient.healthCardId }} </td>
+        </ng-container>
+
+        <!-- First Name Column -->
+        <ng-container matColumnDef="firstName">
+            <th mat-header-cell *matHeaderCellDef> Ime </th>
+            <td mat-cell *matCellDef="let patient"> {{ patient.firstName }} </td>
+        </ng-container>
+
+        <!-- Last Name Column -->
+        <ng-container matColumnDef="lastName">
+            <th mat-header-cell *matHeaderCellDef> Prezime </th>
+            <td mat-cell *matCellDef="let patient"> {{ patient.lastName }} </td>
+        </ng-container>
+
+        <!-- Date of Birth Column -->
+        <ng-container matColumnDef="dob">
+            <th mat-header-cell *matHeaderCellDef> Datum rođenja </th>
+            <td mat-cell *matCellDef="let patient"> {{ patient.dob | date: 'longDate' }} </td>
+        </ng-container>
+  
+        <!-- Symptoms Column -->
+        <ng-container matColumnDef="currentSymptoms">
+          <th mat-header-cell *matHeaderCellDef> Simptomi </th>
+          <td mat-cell *matCellDef="let patient">
+            <ul>
+              <li *ngFor="let symptom of patient.currentSymptoms">{{ symptom.name }}</li>
+            </ul>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="diagnosis">
+          <th mat-header-cell *matHeaderCellDef> Dijagnoza </th>
+          <td mat-cell *matCellDef="let patient">
+            <ul>
+              <li *ngFor="let symptom of patient.diagnosis">{{ symptom.name }}</li>
+            </ul>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+  

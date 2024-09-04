@@ -63,6 +63,12 @@ public class Patient {
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "patient_current_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> currentSymptoms;
+	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "patient_diagnosis", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
+	private List<Symptom> diagnosis;
+	
 
 	public Patient() {
 		super();
@@ -70,7 +76,7 @@ public class Patient {
 
 	public Patient(Long id, String healthCardId, String firstName, String lastName, Date dob,
 			List<Diagnosis> previousDiagnosis, List<Therapy> previousTherapies, List<Diagnosis> currentDiagnosis,
-			List<Therapy> currentTherapies, List<Symptom> previousSymptoms, List<Symptom> currentSymptoms) {
+			List<Therapy> currentTherapies, List<Symptom> previousSymptoms, List<Symptom> currentSymptoms, List<Symptom> diagnosis) {
 		super();
 		this.id = id;
 		this.healthCardId = healthCardId;
@@ -83,6 +89,7 @@ public class Patient {
 		this.currentTherapies = currentTherapies;
 		this.previousSymptoms = previousSymptoms;
 		this.currentSymptoms = currentSymptoms;
+		this.diagnosis = diagnosis;
 	}
 
 	public Long getId() {
@@ -171,6 +178,14 @@ public class Patient {
 
 	public void setCurrentSymptoms(List<Symptom> currentSymptoms) {
 		this.currentSymptoms = currentSymptoms;
+	}
+
+	public List<Symptom> getDiagnosis() {
+		return diagnosis;
+	}
+
+	public void setDiagnosis(List<Symptom> diagnosis) {
+		this.diagnosis = diagnosis;
 	}
 
 	@Override
