@@ -58,7 +58,8 @@ VALUES
 ('Symptom', 49, NULL , false,false,  'Deluzije'),
 ('Symptom', 50, NULL , false,false,  'Katatonija'),
 ('Symptom', 51, NULL , true,false,  'Negativni simptomi'),
-('Symptom', 52, NULL , false,false,  'Anhedonija');
+('Symptom', 52, NULL , false,false,  'Anhedonija'),
+('Symptom', 53, NULL , false,false,  'Zaravnjen afekt');
 
 -- Inserts for symptom_relationship table (unchanged)
 INSERT INTO symptom_relationship (parent_symptom_id, child_symptom_id) 
@@ -115,7 +116,8 @@ VALUES
 (47, 51),
 (49, 39),
 (51, 11),
-(51, 52);
+(51, 52),
+(51, 53);
 
 
 -- Inserts for patient table
