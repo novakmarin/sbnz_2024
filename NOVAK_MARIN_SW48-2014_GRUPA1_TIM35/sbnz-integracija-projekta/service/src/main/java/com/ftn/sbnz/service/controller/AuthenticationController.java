@@ -33,7 +33,7 @@ public class AuthenticationController {
 			System.out.println("Korisnik ne postoji");
 			return new ResponseEntity<User>(HttpStatus.CONFLICT);
 		}
-		if(!(u.getPassword().equals(u.getPassword()))){
+		if(!(loginDTO.getPassword().equals(u.getPassword()))){
 			System.out.println("Pogresna lozinka");
 			return new ResponseEntity<User>(HttpStatus.CONFLICT);
 		}

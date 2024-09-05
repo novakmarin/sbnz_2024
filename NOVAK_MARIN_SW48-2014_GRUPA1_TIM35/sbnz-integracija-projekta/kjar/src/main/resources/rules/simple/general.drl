@@ -193,6 +193,7 @@ then
     System.out.println("RULE 2: Symptom depressive disorder added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     //$appointment.getCurrentSymptoms().add($gadSymptom);
     $patient.getCurrentSymptoms().add($ddSymptom);
+    update($patient)
 end
 
 rule "Identify bipolar affective disorder on Patient History"

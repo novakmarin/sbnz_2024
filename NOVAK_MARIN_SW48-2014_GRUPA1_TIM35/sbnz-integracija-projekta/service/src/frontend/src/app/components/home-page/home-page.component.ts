@@ -29,8 +29,8 @@ export class HomePageComponent {
 
   constructor(private router: Router, private dataService: DataService){
     this.jmbg = '';
-    this.doctorName = localStorage.getItem('docName') || '';
-    this.doctorLastName = localStorage.getItem('docLastName') || '';
+    this.doctorName = localStorage.getItem('doctorName') || '';
+    this.doctorLastName = localStorage.getItem('doctorLastName') || '';
   }
 
   onSubmit(): void {

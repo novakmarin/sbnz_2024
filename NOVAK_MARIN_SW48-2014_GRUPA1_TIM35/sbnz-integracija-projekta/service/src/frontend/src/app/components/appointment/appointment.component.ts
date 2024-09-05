@@ -131,11 +131,15 @@ export class AppointmentComponent {
       },
       error: (error) => {
         console.error('Error saving appointment', error);
+        this.messageService.clear();
         this.messageService.add({severity:'error', summary: 'Greska!', detail: this.error});
       },
       complete: () => {
         console.log('Appointment saved successfully');
         this.patientChoosen = true;
+        this.messageService.clear();
+        this.messageService.add({severity:'success', summary: 'Nalaz uspješno sačuvan.', detail: this.error});
+        //this.msgs.push({severity:'success', summary:'Info Message', detail:'PrimeNG rocks'});
       }
     });
   }
@@ -227,6 +231,26 @@ onKeyDown(event: KeyboardEvent) {
             // Optionally clear the selected item after adding
             this.selectedItem = '';
         }
+  }
+
+  refresh(){
+    this.appointment.currentSymptoms = this.patient.currentSymptoms;
+            this.appointmentService.updateRecommendations(this.appointment).subscribe({
+              next: (data: Appointment) => {
+                this.appointment = data;
+                this.patient = this.appointment.patient as Patient;
+              },
+              error: (error) => {
+                console.error('Error updating appointment', error);
+                this.messageService.add({severity:'error', summary: 'Greska!', detail: this.error});
+              },
+              complete: () => {
+                console.log('Appointment update complete');
+                this.patientChoosen = true;
+              }
+            });
+            // Optionally clear the selected item after adding
+            this.selectedItem = '';
   }
 
   onChipClick(symptom: Symptom){
