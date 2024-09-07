@@ -4,6 +4,7 @@ export class Symptom {
     name: string;
     amentalIllness: boolean;
     hasSpecialDiagnostics: boolean;
+    isCustomSymptom: boolean;
     childSymptoms: Symptom[];
   
     constructor(
@@ -12,6 +13,7 @@ export class Symptom {
       name: string,
       amentalIllness: boolean,
       hasSpecialDiagnostics: boolean,
+      isCustomSymptom: boolean,
       childSymptoms: Symptom[]
     ) {
       this.id = id;
@@ -19,6 +21,7 @@ export class Symptom {
       this.name = name;
       this.amentalIllness = amentalIllness;
       this.hasSpecialDiagnostics = hasSpecialDiagnostics;
+      this.isCustomSymptom = isCustomSymptom;
       this.childSymptoms = childSymptoms;
     }
   }

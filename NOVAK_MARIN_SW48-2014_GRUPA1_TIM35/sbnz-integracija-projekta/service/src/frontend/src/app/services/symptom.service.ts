@@ -13,8 +13,14 @@ export class SymptomService {
 
   constructor(private http: HttpClient) {}
 
+  createSymptom(symptom: Symptom): Observable<any>{
+    return this.http.post(this.apiUrl, symptom);
+  }
+
   getAllSymptoms(): Observable<Symptom[]> {
     return this.http.get<Symptom[]>(this.apiUrl);
   }
+
+  
   
 }

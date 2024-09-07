@@ -23,6 +23,9 @@ public class SymptomService {
     }
 
     public Symptom saveSymptom(Symptom symptom) {
+    	if(symptom.getCode().equals("")) {
+    		symptom.setCode(null);
+    	}
         return symptomRepository.save(symptom);
     }
 
