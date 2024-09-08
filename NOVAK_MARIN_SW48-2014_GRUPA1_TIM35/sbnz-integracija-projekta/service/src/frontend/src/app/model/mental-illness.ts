@@ -7,8 +7,9 @@ export class MentalIllness extends Symptom {
     name: string,
     isAMentalIllness: boolean,
     hasSpecialDiagnostics: boolean,
+    isCustomSymptom: boolean,
     childSymptoms: Symptom[]
   ) {
-    super(id, code, name, isAMentalIllness, hasSpecialDiagnostics, childSymptoms);
+    super(id, code, name, isAMentalIllness, hasSpecialDiagnostics, isCustomSymptom, childSymptoms);
   }
 }

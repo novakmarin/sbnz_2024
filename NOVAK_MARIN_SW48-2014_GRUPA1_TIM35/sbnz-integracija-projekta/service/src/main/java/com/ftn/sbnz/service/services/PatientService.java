@@ -41,6 +41,7 @@ public class PatientService {
     	}
     	System.out.println("BREAK END");
     	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+
     	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
     	for(Symptom s: allSymptoms) {
     		kieSession.insert(s);

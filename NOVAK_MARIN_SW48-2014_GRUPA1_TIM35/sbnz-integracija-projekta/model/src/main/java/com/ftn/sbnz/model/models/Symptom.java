@@ -43,6 +43,8 @@ public class Symptom {
 	private boolean isAMentalIllness;
 	
 	private boolean hasSpecialDiagnostics;
+	
+	private boolean isCustomSymptom;
 
 	//@OneToMany(cascade = CascadeType.ALL)
 	//@JoinColumn(name = "parent_id")
@@ -59,13 +61,15 @@ public class Symptom {
 		super();
 	}
 
-	public Symptom(Long id, String code, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics, List<Symptom> childSymptoms) {
+	public Symptom(Long id, String code, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics,
+			boolean isCustomSymptom, List<Symptom> childSymptoms) {
 		super();
 		this.id = id;
 		this.code = code;
 		this.name = name;
 		this.isAMentalIllness = isAMentalIllness;
 		this.hasSpecialDiagnostics = hasSpecialDiagnostics;
+		this.isCustomSymptom = isCustomSymptom;
 		this.childSymptoms = childSymptoms;
 	}
 
@@ -91,6 +95,14 @@ public class Symptom {
 
 	public void setAMentalIllness(boolean isAMentalIllness) {
 		this.isAMentalIllness = isAMentalIllness;
+	}
+
+	public boolean isCustomSymptom() {
+		return isCustomSymptom;
+	}
+
+	public void setCustomSymptom(boolean isCustomSymptom) {
+		this.isCustomSymptom = isCustomSymptom;
 	}
 
 	public List<Symptom> getChildSymptoms() {
@@ -124,7 +136,7 @@ public class Symptom {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(childSymptoms, id, isAMentalIllness, hasSpecialDiagnostics, name);
+		return Objects.hash(id, name);
 	}
 
 	@Override
@@ -138,6 +150,8 @@ public class Symptom {
 		Symptom other = (Symptom) obj;
 		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
+
+	
 	
 	
 

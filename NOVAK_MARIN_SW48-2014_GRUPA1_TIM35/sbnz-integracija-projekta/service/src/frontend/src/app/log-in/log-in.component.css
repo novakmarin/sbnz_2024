@@ -90,3 +90,11 @@ img {
 	font-size: 17px;
 	text-align: center;
 }
+
+.register a {
+    width: 100%;
+    text-align: center;
+    padding-left: 70%;
+    color: #ededed;
+    cursor: pointer;
+} 

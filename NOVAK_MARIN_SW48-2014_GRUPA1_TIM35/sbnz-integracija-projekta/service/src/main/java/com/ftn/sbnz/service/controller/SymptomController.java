@@ -1,8 +1,10 @@
 package com.ftn.sbnz.service.controller;
 
+import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.Symptom;
 import com.ftn.sbnz.service.services.SymptomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +21,17 @@ public class SymptomController {
         this.symptomService = symptomService;
     }
 
+    // Create a new symptom
     @PostMapping
     public ResponseEntity<Symptom> createSymptom(@RequestBody Symptom symptom) {
-        Symptom savedSymptom = symptomService.saveSymptom(symptom);
-        return ResponseEntity.ok(savedSymptom);
+    	if(symptomService.findSymptomByName(symptom.getName()) == null) {
+    		Symptom savedSymptom = symptomService.saveSymptom(symptom);
+            return new ResponseEntity<>(savedSymptom, HttpStatus.CREATED);
+    	}else {
+    		System.out.println("Symptom with given name already exists.");
+    		return new ResponseEntity<Symptom>(HttpStatus.CONFLICT);
+    	}
+        
     }
 
     @GetMapping("/{id}")

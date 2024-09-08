@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, ObservableLike } from 'rxjs';
 import { LoginDTO } from '../model/loginDTO';
+import { Doctor } from '../model/doctor';
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +21,9 @@ export class AuthService {
     
   logout(){
         localStorage.removeItem("currentUser");  
+  }
+
+  createDoctor(doctor: Doctor): Observable<any> {
+    return this.http.post('http://localhost:8080/doctors', doctor, { observe: 'response' });
   }
 }

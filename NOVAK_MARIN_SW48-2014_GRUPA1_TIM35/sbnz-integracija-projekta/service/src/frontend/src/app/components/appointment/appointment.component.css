@@ -1,3 +1,10 @@
+.form-field .patient-data .refresh-button{
+  color: white;
+  height: 70%;
+  width: 70%;
+  padding-bottom: 15%;
+}
+
 .login-form {
     
     width: 100%; /* Adjusted to one-third */
@@ -81,7 +88,17 @@
     font-weight: 550;
     border-radius: 10px;
     margin: 5px;
-    
+
+}
+
+.diagnosis-chip button{
+  background-color: #a3a3a3; 
+  border-radius: 10px;
+  height: 15px;
+}
+
+.diagnosis-chip button:hover{
+  background-color: #ff0000;
 }
 
 
@@ -118,6 +135,11 @@
   cursor: pointer;
 }
 
+.diagnosis-chip-border1{
+  margin-top: 20px;
+  cursor: pointer;
+}
+
 
 .form-container {
     width: 800px;
@@ -139,7 +161,7 @@
 
   .patient-data{
     display: grid; 
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(4, auto);
   }
 
   .form-field label{
@@ -173,6 +195,8 @@
   .diagnosis-chip-final button:hover{
     background-color: #ff0000;
   }
+
+
 
 
 

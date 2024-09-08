@@ -8,4 +8,7 @@
     <kbase name="smplbase" packages="simple">
         <ksession name="simpleKsession"/>
     </kbase>
+    <kbase name="template-simple-KBase" packages="templatetable">
+        <ksession name="templateSimpleKsession"/>
+    </kbase>
 </kmodule>

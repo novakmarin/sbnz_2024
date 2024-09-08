@@ -1,7 +1,7 @@
 <div  class="login-form" >
     <form *ngIf = "!patientChoosen" #loginForm="ngForm" (ngSubmit)="onSubmit()">
-        <h2>Unesite broj zdravstvene knjižice ili JMBG pacijenta</h2>
-        <input type="text" id="jmbg" name="jmbg" placeholder="JMBG ili KZO broj" [(ngModel)]="jmbg" required>
+        <h2>Unesite broj zdravstvene knjižice (KZO broj) pacijenta</h2>
+        <input type="text" id="jmbg" name="jmbg" placeholder="Broj zdravstvene knjižice (KZO broj) pacijenta" [(ngModel)]="jmbg" required>
         <button pButton type="submit" label="Započni pregled" [disabled]="!loginForm.form.valid" ></button>
         <p-messages [(value)]="msgs"></p-messages>
         <div *ngIf="error" class="error">{{error}}</div>
@@ -21,12 +21,15 @@
                         <label>Datum rođenja: </label>
                         <p>{{patient.dob | date:'dd.MM.yyyy.'}}</p>
                     </div>
-                    <div>
+                    
                       <div>
                         <label>Broj zdravstvene knjižice: </label>
                         <p>{{patient.healthCardId}}</p>
                     </div>
+                    <div >
+                      <button class="refresh-button" name="refreshAppointment" label="&#8635;"  pButton type="button" (click)="refresh()" ></button>
                     </div>
+                    
                 </div>
               </div>
               <div class="form-field">
@@ -76,9 +79,10 @@
                 <label>Preporučene dijagnoze: </label>
                 <div>
                     <mat-chip-set aria-label="Simptomi" name = "Symptoms" >
-                      <div class = "diagnosis-chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index;">
-                        <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness" (click) = "onChipClick(chip)">
-                                {{chip.code}} |   {{ chip.name }} | +
+                      <div class = "diagnosis-chip-border1" *ngFor="let chip of patient.currentSymptoms; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness" (click) = "onChipClick(chip)" removable (removed)="removeChip(i)">
+                                {{chip.code}} |   {{ chip.name }}
+                                <button matChipRemove>&times;</button>
                         </mat-basic-chip>
                       </div>
                     </mat-chip-set>
@@ -107,6 +111,8 @@
                     [(ngModel)]="appointment.note">
                 </textarea>
               </div>
+              <p-messages [(value)]="msgs"></p-messages>
+              <div *ngIf="error" class="error">{{error}}</div>
               <button name="saveAppointment" label="Sačuvaj i završi pregled" pButton type="submit" class="p-button p-component"></button>
             </form>
           </div>

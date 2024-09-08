@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { DataService } from '../services/data.service';
 import { Doctor } from '../model/doctor';
+import { User } from '../model/user';
 
 
 @Component({
@@ -26,6 +27,9 @@ export class LogInComponent {
   error: string;
   msgs: any;
   doctor: Doctor;
+  newDoctor: Doctor;
+  registrationActive: boolean;
+  user: User;
 
   constructor(private authService: AuthService, private router: Router, private messageService: MessageService, private dataService: DataService) {
     this.username = '';
@@ -33,6 +37,9 @@ export class LogInComponent {
     this.error = '';
     this.msgs = [];
     this.doctor = new Doctor();
+    this.newDoctor = new Doctor();
+    this.registrationActive = false;
+    this.user = new User();
   }
 
   onSubmit(): void {
@@ -46,8 +53,38 @@ export class LogInComponent {
       },
       error: (err) => {
         console.error('Login failed', err);
+        this.messageService.clear();
         this.messageService.add({severity:'error', summary: 'Neispravni kredencijali!', detail: this.error});
         this.msgs.push({severity:'error', summary:'Info Message', detail:'PrimeNG rocks'});
+      }
+    });
+  }
+
+  toggleReg(){
+    if(this.registrationActive){
+      this.registrationActive = false;
+    }else{
+      this.registrationActive = true;
+    }
+  }
+
+  register(): void {
+    this.authService.createDoctor(this.newDoctor).subscribe({
+      next: (response) => {
+        this.doctor = response;
+        console.log('Registration successful');
+        this.registrationActive = false;
+        this.messageService.clear();
+        this.msgs = [];
+        this.messageService.add({severity:'success', summary: 'Registracija uspješna. Dobrodošli!', detail: this.error});
+        this.msgs.push({severity:'success', summary:'Registracija uspješna. Dobrodošli!', detail:'Sada možete da se prijavite.'});
+      },
+      error: (err) => {
+        console.error('Login failed', err);
+        this.messageService.clear();
+        this.msgs = [];
+        this.messageService.add({severity:'error', summary: 'Korisnik sa unesenim korisničkim imenom već postoji.', detail: this.error});
+        this.msgs.push({severity:'error', summary:'Greška prilikom registracije', detail:'Korisnik sa unesenim korisničkim imenom već postoji.'});
       }
     });
   }

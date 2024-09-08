@@ -6,16 +6,28 @@ body {
 
 .sidebar {
     width: 20%;
-    height: 100vh;
+    height: 100%;
     background-color: #333;
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 20px;
+    padding-bottom: 0px;
     box-sizing: border-box;
     position: fixed;
     text-align: center; /* Center align text in the sidebar */
+}
+
+.sidebar .logoutButton{
+    font-size: 12px;
+    margin-top: -10px;
+    
+}
+
+.sidebar .logoutButton a{
+    color: white;
+    text-decoration: none;
 }
 
 .logo {
