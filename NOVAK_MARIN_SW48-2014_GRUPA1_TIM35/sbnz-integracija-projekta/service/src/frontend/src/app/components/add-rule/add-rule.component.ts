@@ -115,6 +115,7 @@ export class AddRuleComponent {
   }
 
   onSubmit(): void {
+    this.symptom.customSymptom = true;
     this.symptomService.createSymptom(this.symptom).subscribe({
       next: (data: Symptom) => {
         this.symptom = data;

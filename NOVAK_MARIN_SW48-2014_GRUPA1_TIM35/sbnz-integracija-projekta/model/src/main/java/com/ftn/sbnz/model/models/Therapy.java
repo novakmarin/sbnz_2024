@@ -1,5 +1,8 @@
 package com.ftn.sbnz.model.models;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -9,8 +12,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 public class Therapy {
@@ -22,6 +31,11 @@ public class Therapy {
     private boolean isMedication;
 
     private String name;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "therapy_for", joinColumns = @JoinColumn(name = "therapy_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
+	private List<Symptom> therapyFor;
 
 	public Therapy() {
 		super();

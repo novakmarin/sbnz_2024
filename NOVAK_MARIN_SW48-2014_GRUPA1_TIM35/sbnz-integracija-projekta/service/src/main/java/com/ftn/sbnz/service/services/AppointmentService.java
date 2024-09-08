@@ -69,6 +69,44 @@ public class AppointmentService {
     }
     
     public Appointment fireRules(Appointment appointment) {
+    	
+    	
+    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
+    	List<Appointment> allAppointments = this.findAllAppointments();
+    	for(Symptom s: allSymptoms) {
+    		kieSession.insert(s);
+    	}
+    	for(Appointment a: allAppointments) {
+    		System.out.println("APPOINTMENTS START");
+    		System.out.println(a.getDate().toString());
+    		System.out.println("APPOINTMENTS END");
+    		kieSession.insert(a);
+    	}
+
+    	kieSession.insert(appointment);
+    	kieSession.insert(appointment.getPatient());
+    	
+    	
+    	kieSession.fireAllRules();
+    	kieSession.dispose();
+    	
+    	boolean hasCustomSymptom = false;
+    	for (Symptom symptom : appointment.getCurrentSymptoms()) {
+    	    if (symptom.isCustomSymptom()) {
+    	    	System.out.println(symptom.isCustomSymptom());
+    	        hasCustomSymptom = true;
+    	        break; // Exit the loop early since we found a custom symptom
+    	    }
+    	}
+    	if(hasCustomSymptom) {
+    		appointment = fireCustomRules(appointment, allSymptoms, allAppointments);
+    	}
+    	
+    	return appointment;
+    }
+    
+    public Appointment fireCustomRules(Appointment appointment, List<Symptom> allSymptoms, List<Appointment> allAppointments) {
     	InputStream template = AppointmentService.class.getResourceAsStream("/rules/templatetable/new-rule.drt");
         List<NewRuleTemplateModel> data = nrtmService.getAll();
         
@@ -78,31 +116,20 @@ public class AppointmentService {
         System.out.println(drl);
         
         KieSession ksession = createKieSessionFromDRL(drl);
-    	
-    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
-    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
-    	List<Appointment> allAppointments = this.findAllAppointments();
-    	for(Symptom s: allSymptoms) {
-    		kieSession.insert(s);
+        
+        for(Symptom s: allSymptoms) {
     		ksession.insert(s);
     	}
     	for(Appointment a: allAppointments) {
-    		System.out.println("APPOINTMENTS START");
-    		System.out.println(a.getDate().toString());
-    		System.out.println("APPOINTMENTS END");
-    		kieSession.insert(a);
     		ksession.insert(a);
     	}
-
-    	kieSession.insert(appointment);
-    	kieSession.insert(appointment.getPatient());
     	
     	ksession.insert(appointment);
     	ksession.insert(appointment.getPatient());
-    	kieSession.fireAllRules();
-    	kieSession.dispose();
+    	
     	ksession.fireAllRules();
     	ksession.dispose();
+    	
     	return appointment;
     }
     

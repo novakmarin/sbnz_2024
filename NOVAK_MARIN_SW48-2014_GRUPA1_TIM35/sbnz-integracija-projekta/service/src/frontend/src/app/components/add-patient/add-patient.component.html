@@ -25,6 +25,32 @@
         <label for="healthCardId">Broj zdravstvene knjižice (KZO broj)</label>
         <input pInputText type="text" id="healthCardId" name = "healthCardId" [(ngModel)] = "patient.healthCardId" placeholder="Unesite broj zdravstvene knjižice (KZO broj) pacijenta" required>
       </div>
+      <div class="form-field">
+        <label>Unesite alergije:</label>
+        <p-autoComplete 
+            name = "symptomsAutoComplete"
+            [(ngModel)]="selectedItem" 
+            [suggestions]="filteredItems" 
+            (completeMethod)="filterItems($event)" 
+            (keydown)="onKeyDown($event)"
+            (onSelect)="onSelect()"
+            [minLength]="1" 
+            placeholder="Unesite simptome...">
+        </p-autoComplete>
+      </div>
+      <div class="form-field">
+        <label>Alergije: </label>
+        <div>
+            <mat-chip-set aria-label="Alergije" name = "Allergies">
+              <div class = "chip-border" *ngFor="let chip of patient.previousTherapies let i = index">
+                <mat-basic-chip class="custom-chip"  removable (removed)="removeChip(i)">
+                {{ chip.name }}
+                <button matChipRemove>&times;</button>
+                </mat-basic-chip>
+              </div>
+            </mat-chip-set>
+        </div>
+      </div>
       <div *ngIf="error" class="error">{{error}}</div>
       <p-messages [(value)]="msgs"></p-messages>
       <button pButton type="submit" class="p-button p-component" [disabled]="!createPatientForm.form.valid">Dodaj pacijenta</button>
