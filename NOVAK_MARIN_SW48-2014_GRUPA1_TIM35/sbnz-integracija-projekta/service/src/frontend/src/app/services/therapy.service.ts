@@ -21,4 +21,9 @@ export class TherapyService {
     const url = `${this.apiUrl}/suggestTherapies/${appointment.id}`;
     return this.http.put<Therapy[]>(url, appointment);
   }
+
+  updateTherapy(therapy: Therapy): Observable<Therapy>{
+    const url = `${this.apiUrl}/updateTherapy/${therapy.id}`;
+    return this.http.put<Therapy>(url, therapy);
+  }
 }

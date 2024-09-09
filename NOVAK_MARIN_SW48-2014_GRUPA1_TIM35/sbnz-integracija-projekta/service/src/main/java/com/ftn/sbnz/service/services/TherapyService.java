@@ -82,6 +82,16 @@ public class TherapyService {
     public List<Therapy> getAllTherapies() {
         return therapyRepository.findAll();
     }
+    
+    public Therapy updateTherapy(Therapy therapy) {
+    	Therapy updatedTherapy = therapyRepository.findById(therapy.getId()).get();
+    	for(Symptom s: therapy.getTherapyFor()) {
+    		if(!updatedTherapy.getTherapyFor().contains(s)) {
+    			updatedTherapy.getTherapyFor().add(symptomService.findSymptomByName(s.getName()));
+    		}
+    	}
+    	return this.saveTherapy(updatedTherapy);
+    }
 
     public void deleteTherapy(Long id) {
         therapyRepository.deleteById(id);

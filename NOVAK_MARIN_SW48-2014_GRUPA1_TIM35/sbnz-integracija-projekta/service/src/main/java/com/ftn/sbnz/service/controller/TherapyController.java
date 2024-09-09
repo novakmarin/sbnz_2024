@@ -37,4 +37,12 @@ public class TherapyController {
         return suggestedTherapies != null ? new ResponseEntity<>(suggestedTherapies, HttpStatus.OK) 
                                       : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+	
+	@PutMapping("/updateTherapy/{id}")
+    public ResponseEntity<Therapy> updateTherapy(@PathVariable Long id, @RequestBody Therapy therapy) {
+        System.out.println("USLO U THERAPY UPDATE.");
+		Therapy updatedTherapy = therapyService.updateTherapy(therapy);
+        return updatedTherapy != null ? new ResponseEntity<>(updatedTherapy, HttpStatus.OK) 
+                                      : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

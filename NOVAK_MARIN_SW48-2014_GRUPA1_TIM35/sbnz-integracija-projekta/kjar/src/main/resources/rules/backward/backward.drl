@@ -1,1 +1,49 @@
 package backward;
+
+import com.ftn.sbnz.model.models.*;
+
+import java.util.Date;
+import java.util.Calendar;
+import java.util.List;
+
+query hasASymptom(Patient patient, Symptom symptom)
+    $symptom: Symptom( symptom.name; ) from patient.currentSymptoms
+    or
+    //mozda current
+    ($newParent: Symptom() from patient.currentSymptoms
+    and
+    //$symptom1: Symptom( symptom.name; )
+    isASubsymptomOf(symptom, $newParent;))
+end
+
+query isASubsymptomOf(Symptom child, Symptom parent)
+    $parentSymptom: Symptom( parent.name; childSymptoms != null)
+    Symptom( child.name; ) from $parentSymptom.childSymptoms
+    or
+    ($subsymptom: Symptom() from $parentSymptom.childSymptoms
+    and
+    //vrv greska arg 2
+    eval($subsymptom != null)
+    and
+    isASubsymptomOf(child, $subsymptom;))
+end
+
+rule "Getting patient with a symptom"
+lock-on-active true
+when
+    $patients: List()
+    $symptomName: String()
+    $p: Patient()
+    $s: Symptom(name == $symptomName)
+    not Patient( id == $p.id) from $patients
+    //$s1: Symptom(name == "Briga")
+    //$s2: Symptom(name == "Socijalna anksioznost")
+    hasASymptom( $p, $s; )
+    //isASubsymptomOf( $s1, $s2; )
+then
+    System.out.println("\nRULE 4 BACKWARDS: Patient:");
+    System.out.println($p.getFirstName() + " " + $p.getLastName());
+    System.out.println("has " + $s.getName() + ".\n");
+    modify($patients){ add($p) }
+end
+

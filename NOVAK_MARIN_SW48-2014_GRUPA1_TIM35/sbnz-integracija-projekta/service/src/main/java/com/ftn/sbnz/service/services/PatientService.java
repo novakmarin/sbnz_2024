@@ -69,7 +69,7 @@ public class PatientService {
     }
     
     public List<Patient> findPatientsWithSymptom(Symptom symptom) {
-    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	KieSession kieSession = kieContainer.newKieSession("bwKsession");
     	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
     	ArrayList<Patient> allPatients = (ArrayList<Patient>) patientRepository.findAll();
     	for(Symptom s: allSymptoms) {
