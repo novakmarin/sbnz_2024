@@ -23,6 +23,8 @@ import { Appointment } from '../../model/appointment';
 import { CalendarModule } from 'primeng/calendar';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AppointmentService } from '../../services/appointment.service';
+import { Therapy } from '../../model/therapy';
+import { TherapyService } from '../../services/therapy.service';
 
 
 @Component({
@@ -31,7 +33,7 @@ import { AppointmentService } from '../../services/appointment.service';
   imports: [FormsModule, CommonModule, MessagesModule, AutoCompleteModule, ChipsModule, MatChipsModule
     ,MatFormFieldModule, MatIconModule, MatAutocompleteModule, CalendarModule, InputTextareaModule
   ],
-  providers: [PatientService, MessageService, SymptomService, AppointmentService],
+  providers: [PatientService, MessageService, SymptomService, AppointmentService, TherapyService],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })
@@ -59,6 +61,7 @@ export class AppointmentComponent {
   allSymptoms: Symptom[];
   patientsSymptoms: Symptom[];
   patientsSymptomsNames: string[] = [];
+  suggestedTherapies: Therapy[];
 
   items: string[] = [];
   filteredItems: string[];
@@ -68,7 +71,8 @@ export class AppointmentComponent {
     private patientService: PatientService,
     private symptomService: SymptomService, 
     private messageService: MessageService,
-    private appointmentService: AppointmentService)
+    private appointmentService: AppointmentService,
+    private therapyService: TherapyService)
   {
     this.jmbg = '';
     this.patientChoosen = false;
@@ -82,6 +86,7 @@ export class AppointmentComponent {
     this.appointment = new Appointment();
     this.appointment.id = 100;
     this.appointment.date = new Date();
+    this.suggestedTherapies = [];
 
     this.fruits = signal(this.patientsSymptomsNames);
 
@@ -140,6 +145,27 @@ export class AppointmentComponent {
         this.messageService.clear();
         this.messageService.add({severity:'success', summary: 'Nalaz uspješno sačuvan.', detail: this.error});
         //this.msgs.push({severity:'success', summary:'Info Message', detail:'PrimeNG rocks'});
+      }
+    });
+  }
+
+  getTherapyRecommendations(): void{
+    this.therapyService.getTherapyRecommendations(this.appointment).subscribe({
+      next: (data: Therapy[]) => {
+        this.suggestedTherapies = data;
+        this.appointment.patient = this.patient;
+      },
+      error: (error) => {
+        console.error('Error getting therapy recommendations', error);
+        this.messageService.add({severity:'error', summary: 'Greška!', detail: this.error});
+        this.msgs.push({severity:'error', summary:'Info Message', detail:'PrimeNG rocks'});
+      },
+      complete: () => {
+        console.log('Recommendation retrieval complete');
+        this.patientChoosen = true;
+        this.patient.currentSymptoms?.forEach((symptom, index) =>{
+          this.patientsSymptomsNames.push(symptom.name);
+        });
       }
     });
   }
@@ -255,6 +281,11 @@ onKeyDown(event: KeyboardEvent) {
 
   onChipClick(symptom: Symptom){
     this.appointment?.patient?.diagnosis?.push(symptom);
+    this.getTherapyRecommendations();
+  }
+
+  onTherapyChipClick(therapy: Therapy){
+    this.appointment?.patient?.currentTherapies?.push(therapy);
   }
 
 add(event: MatChipInputEvent): void {
@@ -294,6 +325,10 @@ removeChip(index: number): void {
 
 removeDiagnosis(index: number): void {
   this.patient.diagnosis?.splice(index, 1);
+}
+
+removeTherapy(index: number): void {
+  this.patient.currentTherapies?.splice(index, 1);
 }
 
 

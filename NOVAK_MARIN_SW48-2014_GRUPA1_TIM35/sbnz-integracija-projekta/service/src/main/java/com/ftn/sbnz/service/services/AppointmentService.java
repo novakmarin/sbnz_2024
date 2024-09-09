@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ftn.sbnz.model.models.Appointment;
 import com.ftn.sbnz.model.models.NewRuleTemplateModel;
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Therapy;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.service.repository.AppointmentRepository;
+import com.ftn.sbnz.service.repository.TherapyRepository;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +46,9 @@ public class AppointmentService {
     SymptomService symptomService;
     
     @Autowired
+    TherapyRepository therapyRepository;
+    
+    @Autowired
     NewRuleTemplateModelService nrtmService;
     
     @Autowired
@@ -53,16 +58,21 @@ public class AppointmentService {
     	
     	List<Symptom> symptoms = new ArrayList<Symptom>();
     	List<Symptom> diagnosis = new ArrayList<Symptom>();
+    	List<Therapy> therapies = new ArrayList<Therapy>();
     	for(Symptom s: appointment.getPatient().getCurrentSymptoms()) {
     		symptoms.add(symptomService.findSymptomByName(s.getName()));
     	}
     	for(Symptom s: appointment.getPatient().getDiagnosis()) {
     		diagnosis.add(symptomService.findSymptomByName(s.getName()));
     	}
+    	for(Therapy t: appointment.getPatient().getCurrentTherapies()) {
+    		therapies.add(therapyRepository.findByName(t.getName()).get());
+    	}
     	appointment.setCurrentSymptoms(symptoms);
     	Patient patient = patientService.getPatientById(appointment.getPatient().getId()).get();
     	patient.setCurrentSymptoms(symptoms);
     	patient.setDiagnosis(diagnosis);
+    	patient.setCurrentTherapies(therapies);
     	appointment.setPatient(patient);
     	
         return appointmentRepository.save(appointment);
