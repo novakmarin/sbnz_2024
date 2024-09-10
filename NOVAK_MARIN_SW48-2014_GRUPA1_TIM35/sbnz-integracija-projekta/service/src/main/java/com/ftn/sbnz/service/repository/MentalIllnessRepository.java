@@ -15,9 +15,9 @@ public interface MentalIllnessRepository extends JpaRepository<MentalIllness, Lo
 
     Optional<MentalIllness> findByName(String name);
 
-    // Fetch all symptoms that are parents of a given symptom ID
-    @Query("SELECT s.parentSymptoms FROM Symptom s WHERE s.id = :symptomId")
-    List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId);
+//    // Fetch all symptoms that are parents of a given symptom ID
+//    @Query("SELECT s.parentSymptoms FROM Symptom s WHERE s.id = :symptomId")
+//    List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId);
 
     // Fetch all symptoms that are children of a given symptom ID
     @Query("SELECT s.childSymptoms FROM Symptom s WHERE s.id = :symptomId")

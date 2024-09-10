@@ -1,0 +1,147 @@
+<div  class="login-form" >
+    <form *ngIf = "!patientChoosen" #loginForm="ngForm" (ngSubmit)="onSubmit()">
+        <h2>Unesite broj zdravstvene knjižice (KZO broj) pacijenta</h2>
+        <input type="text" id="jmbg" name="jmbg" placeholder="Broj zdravstvene knjižice (KZO broj) pacijenta" [(ngModel)]="jmbg" required>
+        <button pButton type="submit" label="Započni pregled" [disabled]="!loginForm.form.valid" ></button>
+        <p-messages [(value)]="msgs"></p-messages>
+        <div *ngIf="error" class="error">{{error}}</div>
+        
+    </form>
+    <div *ngIf="patientChoosen">
+        <div class="form-container">
+            <h2>Dijagnostifikovanje</h2>
+            <form (ngSubmit)="onAppointmentSubmit()" (keydown.enter)="$event.preventDefault()">
+              <div class="form-field">
+                <div class = "patient-data">
+                    <div>
+                        <label>Pacijent: </label>
+                        <p>{{patient.firstName}} {{patient.lastName}}</p>
+                    </div>
+                    <div>
+                        <label>Datum rođenja: </label>
+                        <p>{{patient.dob | date:'dd.MM.yyyy.'}}</p>
+                    </div>
+                    
+                      <div>
+                        <label>Broj zdravstvene knjižice: </label>
+                        <p>{{patient.healthCardId}}</p>
+                    </div>
+                    <div >
+                      <button class="refresh-button" name="refreshAppointment" label="&#8635;"  pButton type="button" (click)="refresh()" ></button>
+                    </div>
+                    
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Datum (demo):</label>
+                <p-calendar name ="appointmentDate" id="date" placeholder="Unesite datum pregleda" showIcon="true" [(ngModel)] = "appointment.date"></p-calendar>
+              </div>
+              <div class="form-field">
+                <label>Unesite simptome:</label>
+                <p-autoComplete 
+                    name = "symptomsAutoComplete"
+                    [(ngModel)]="selectedItem" 
+                    [suggestions]="filteredItems" 
+                    (completeMethod)="filterItems($event)" 
+                    (keydown)="onKeyDown($event)"
+                    (onSelect)="onSelect()"
+                    [minLength]="1" 
+                    placeholder="Unesite simptome...">
+                </p-autoComplete>
+              </div>
+              <div class="form-field">
+                <label>Prosti simptomi: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index">
+                        <mat-basic-chip class="custom-chip"  *ngIf="chip.childSymptoms.length == 0 && !chip.amentalIllness"   removable (removed)="removeChip(i)">
+                        {{ chip.name }}
+                        <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Složeni simptomi: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "chip-border" *ngFor="let chip of patient.currentSymptoms; let i = index;">
+                        <mat-basic-chip class="custom-chip"  *ngIf="chip.childSymptoms.length > 0 && !chip.amentalIllness"  removable (removed)="removeChip(i)">
+                                {{ chip.name }}
+                              <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Preporučene dijagnoze: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms" >
+                      <div class = "diagnosis-chip-border1" *ngFor="let chip of patient.currentSymptoms; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip"  *ngIf="chip.amentalIllness" (click) = "onChipClick(chip)" removable (removed)="removeChip(i)">
+                                {{chip.code}} |   {{ chip.name }}
+                                <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Zaključena dijagnoza: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "diagnosis-chip-border" *ngFor="let chip of patient.diagnosis; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip-final"  *ngIf="chip.amentalIllness" removable (removed)="removeDiagnosis(i)">
+                                {{chip.code}} |   {{ chip.name }}
+                                <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Preporučena terapija: </label>
+                <div>
+                    <mat-chip-set aria-label="Terapije" name = "Therapies" >
+                      <div class = "diagnosis-chip-border1" *ngFor="let chip of suggestedTherapies; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip"   (click) = "onTherapyChipClick(chip)">
+                                {{ chip.name }}
+                                <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Zaključena terapija: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "diagnosis-chip-border" *ngFor="let chip of patient.currentTherapies; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip-final" removable (removed)="removeTherapy(i)">
+                                {{ chip.name }}
+                                <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Naponeme: </label>
+                <textarea 
+                    name = "noteArea"
+                    rows="5"
+                    cols="90" 
+                    pInputTextarea 
+                    [(ngModel)]="appointment.note">
+                </textarea>
+              </div>
+              <p-messages [(value)]="msgs"></p-messages>
+              <div *ngIf="error" class="error">{{error}}</div>
+              <button name="saveAppointment" label="Sačuvaj i završi pregled" pButton type="submit" class="p-button p-component"></button>
+            </form>
+          </div>
+    </div>
+</div>

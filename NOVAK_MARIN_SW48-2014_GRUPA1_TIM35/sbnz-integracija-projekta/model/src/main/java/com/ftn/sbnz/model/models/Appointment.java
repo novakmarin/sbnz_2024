@@ -2,6 +2,7 @@ package com.ftn.sbnz.model.models;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -128,5 +129,24 @@ public class Appointment {
 		return "Appointment [id=" + id + ", date=" + date + ", doctor=" + doctor + ", patient=" + patient
 				+ ", diagnosis=" + diagnosis + ", currentSymptoms=" + currentSymptoms + ", note=" + note + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Appointment other = (Appointment) obj;
+		return Objects.equals(id, other.id);
+	}
+	
+	
 
 }

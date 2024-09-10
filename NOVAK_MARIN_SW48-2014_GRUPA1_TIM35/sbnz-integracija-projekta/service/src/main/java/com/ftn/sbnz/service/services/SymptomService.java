@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Therapy;
 import com.ftn.sbnz.service.repository.SymptomRepository;
+import com.ftn.sbnz.service.repository.TherapyRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +18,16 @@ public class SymptomService {
 
     private final SymptomRepository symptomRepository;
 
+
     @Autowired
     public SymptomService(SymptomRepository symptomRepository) {
         this.symptomRepository = symptomRepository;
     }
 
     public Symptom saveSymptom(Symptom symptom) {
+    	if(symptom.getCode().equals("")) {
+    		symptom.setCode(null);
+    	}
         return symptomRepository.save(symptom);
     }
 
@@ -29,18 +35,24 @@ public class SymptomService {
         return symptomRepository.findById(id);
     }
 
-    public Optional<Symptom> findSymptomByName(String name) {
+    public Symptom findSymptomByName(String name) {
         return symptomRepository.findByName(name);
     }
+    
+    public Symptom findSymptomByCode(String code) {
+    	return symptomRepository.findByCode(code);
+    }
+    
+    
 
     public void deleteSymptom(Long id) {
         symptomRepository.deleteById(id);
     }
 
-    // Retrieve all parent symptoms of a given symptom ID
-    public List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId) {
-        return symptomRepository.findAllParentSymptomsBySymptomId(symptomId);
-    }
+//    // Retrieve all parent symptoms of a given symptom ID
+//    public List<Symptom> findAllParentSymptomsBySymptomId(Long symptomId) {
+//        return symptomRepository.findAllParentSymptomsBySymptomId(symptomId);
+//    }
 
     // Retrieve all child symptoms of a given symptom ID
     public List<Symptom> findAllChildSymptomsBySymptomId(Long symptomId) {

@@ -1,0 +1,28 @@
+template header
+id
+symptomName
+minSymptomsPresent
+
+package templatetable;
+
+import com.ftn.sbnz.model.models.*;
+
+template "custom-symptom-rules"
+
+rule "Identify symptom_@{row.rowNumber}"
+when
+    $newSymptom : Symptom(name == "@{symptomName}", $newSSymptoms: childSymptoms)
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    not Symptom(id == $newSymptom.id) from $patientSymptoms
+    $sNo: Number(intValue >= @{minSymptomsPresent}) from accumulate(
+        $s1: Symptom(this memberOf $newSSymptoms) from $patient.currentSymptoms,
+        count($s1)
+    )
+then
+    System.out.println("RULE: Symptom @{symptomName} added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($newSymptom);
+    update($patient)
+end
+
+end template

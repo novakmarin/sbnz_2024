@@ -20,16 +20,17 @@ import javax.persistence.TemporalType;
 
 @Entity
 @DiscriminatorValue("MentalIllness")
-public class MentalIllness extends Symptom{
+public class MentalIllness extends Symptom {
 
 	public MentalIllness() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public MentalIllness(Long id, String name, List<Symptom> parentSymptoms, List<Symptom> childSymptoms) {
-		super(id, name, parentSymptoms, childSymptoms);
+	public MentalIllness(Long id, String code, String name, boolean isAMentalIllness, boolean hasSpecialDiagnostics,
+			boolean isCustomSymptom, List<Symptom> childSymptoms) {
+		super(id, code, name, isAMentalIllness, hasSpecialDiagnostics, isCustomSymptom, childSymptoms);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 }

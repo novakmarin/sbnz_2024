@@ -1,0 +1,414 @@
+package simple;
+
+import com.ftn.sbnz.model.models.*;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.List;
+
+rule "Add Complex Symptoms to Patients"
+when
+    $patient : Patient($symptoms : currentSymptoms)
+
+    $parentSymptom : Symptom(hasSpecialDiagnostics == false, childSymptoms != null, childSymptoms.size() > 0)
+
+    eval($symptoms.containsAll($parentSymptom.getChildSymptoms()))    
+
+    not Symptom(id == $parentSymptom.id) from $symptoms
+then
+    $patient.getCurrentSymptoms().add($parentSymptom);
+    System.out.println("RULE 1: Symptom " + $parentSymptom.getName() + " added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($patient);
+    update($patient);
+end
+
+
+rule "Identify Chronic GAD Based on Patient History"
+when
+    $gadSymptom : Symptom(name == "Generalizovani anksiozni poremećaj", $gadSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    $symptom : Symptom(name == "Anksioznost") from $patientSymptoms
+    
+    $appointment1: Appointment(patient == $patient, $id1 : id, $date1: date)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,
+    						   date.before(minusMonths($date1, 6)) == true,	
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0) 
+                            
+    $oldSymptom : Symptom(name == "Anksioznost") from $appointment.currentSymptoms
+
+    //$otherSymptom : Symptom(name != "Anksioznost") from $gadSymptom.childSymptoms
+
+    not Symptom(id == $gadSymptom.id) from $patientSymptoms
+    not Symptom(id == $gadSymptom.id) from $appointment.currentSymptoms
+    
+    $sNo: Number(intValue >= 2) from accumulate(
+        $s1: Symptom(name != "Anksioznost", this memberOf $gadSymptoms) from $appointment1.currentSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE 2: Symptom GAD added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($appointment);
+    System.out.println($sNo);
+    //$appointment.getCurrentSymptoms().add($gadSymptom);
+    $patient.getCurrentSymptoms().add($gadSymptom);
+    update($patient)
+end
+
+rule "Identify manic episode"
+when
+    $manicSymptom : Symptom(name == "Manična epizoda", $manicSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $manicSymptom.id) from $patientSymptoms
+    
+    $sNo: Number(intValue >= 4) from accumulate(
+        $s1: Symptom(this memberOf $manicSymptoms) from $patient.currentSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE 3: Symptom manic episode added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($manicSymptom);
+    update($patient);
+end
+
+rule "Identify manjak volje"
+when
+    $manjakSymptom : Symptom(name == "Manjak volje", $manjakId: id, $manjakChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $manjakSymptom.id) from $patientSymptoms
+    
+    $sNo: Number(intValue >= 3) from accumulate(
+        $s1: Symptom(
+            id != $manjakId, 
+            this memberOf $manjakChildSymptoms) from $patientSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE 3: Symptom manjak volje added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($manjakSymptom);
+    update($patient);
+end
+
+rule "Identify halluciantions"
+when
+    $hallucinationsSymptom : Symptom(name == "Halucinacije", $hId: id, $hChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $hallucinationsSymptom.id) from $patientSymptoms
+
+    $symptom: Symptom(name == "Vizuelne halucinacije" || name == "Auditorne halucinacije") from $patientSymptoms
+    
+then
+    System.out.println("RULE 3: Symptom hallucinations added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    $patient.getCurrentSymptoms().add($hallucinationsSymptom);
+    update($patient);
+end
+
+rule "Identify nepovezano misljenje i govor"
+when
+    $nmigSymptom : Symptom(name == "Nepovezano mišljenje i govor", $nmigId: id, $nmigChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $nmigSymptom.id) from $patientSymptoms
+    
+    $sNo: Number(intValue >= 2) from accumulate(
+        $s1: Symptom(
+            id != $nmigId, 
+            this memberOf $nmigChildSymptoms) from $patientSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE 3: Symptom nepovezano mišljenje i govor added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    $patient.getCurrentSymptoms().add($nmigSymptom);
+    update($patient);
+end
+
+rule "Identify sleep issues"
+when
+    $siSymptom : Symptom(name == "Problemi sa snom", $siId: id, $siChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $siSymptom.id) from $patientSymptoms
+
+    $symptom: Symptom(name == "Insomnija" || name == "Hipersomnija") from $patientSymptoms
+    
+then
+    System.out.println("RULE 3: Symptom sleep issues added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    $patient.getCurrentSymptoms().add($siSymptom);
+    update($patient);
+end
+
+rule "Identify depression"
+when
+    $dSymptom : Symptom(name == "Depresija", $dId: id, $dChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $dSymptom.id) from $patientSymptoms
+    
+    $sNo: Number(intValue >= 3) from accumulate(
+        $s1: Symptom(
+            id != $dId, 
+            this memberOf $dChildSymptoms) from $patientSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE 3: Symptom depresija added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($dSymptom);
+    update($patient);
+end
+
+rule "Identify depressive disorder on Patient History"
+when
+    $ddSymptom : Symptom(name == "Depresivni poremećaj")
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    $symptom : Symptom(name == "Depresija") from $patientSymptoms
+    
+    $appointment1: Appointment(patient == $patient, $id1 : id, $date1: date)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,
+    						   date.before(minusMonths($date1, 6)) == true,	
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0) 
+                            
+    $oldSymptom : Symptom(name == "Depresija") from $appointment.currentSymptoms
+
+    //$otherSymptom : Symptom(name != "Anksioznost") from $gadSymptom.childSymptoms
+
+    not Symptom(id == $ddSymptom.id) from $patientSymptoms
+    not Symptom(id == $ddSymptom.id) from $appointment.currentSymptoms
+
+then
+    System.out.println("RULE 2: Symptom depressive disorder added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    //$appointment.getCurrentSymptoms().add($gadSymptom);
+    $patient.getCurrentSymptoms().add($ddSymptom);
+    update($patient)
+end
+
+rule "Identify bipolar affective disorder on Patient History"
+when
+    $bapSymptom : Symptom(name == "Bipolarni afektivni poremećaj", $bapSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    $symptom : Symptom(name == "Depresija" || name == "Manična epizoda") from $patientSymptoms
+    $symptom1 : Symptom(name != $symptom.name) from $bapSymptoms
+    
+    $appointment : Appointment(patient == $patient, 
+                               $id1 : id, 
+                               $date: date, 
+                               $symptom memberOf currentSymptoms,
+                               $symptom1 not memberOf currentSymptoms)
+    $appointment3 : Appointment(patient == $patient,
+    						   id != $id1,
+                               $date3 : date,
+    						   date.before(minusDays($date, 7)) == true,	
+                               currentSymptoms != null,
+                               $symptom memberOf currentSymptoms,
+                               $symptom1 not memberOf currentSymptoms,
+                               currentSymptoms.size() > 0)                          
+    $appointment2 : Appointment(patient == $patient,
+    						   id != $id1,
+                               $date2: date,
+    						   date.before($date3) == true,
+                               $symptom1 memberOf currentSymptoms,
+                               $symptom not memberOf currentSymptoms,	
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0) 
+    $appointment1 : Appointment(patient == $patient,
+    						   id != $id1,
+                               $date1: date,
+    						   date.before(minusDays($date2, 7)) == true,
+                               $symptom1 memberOf currentSymptoms,
+                               $symptom not memberOf currentSymptoms,	
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0) 
+
+    not Symptom(id == $bapSymptom.id) from $patientSymptoms
+    not Symptom(id == $bapSymptom.id) from $appointment.currentSymptoms
+    not Symptom(id == $bapSymptom.id) from $appointment1.currentSymptoms
+    not Symptom(id == $bapSymptom.id) from $appointment2.currentSymptoms
+    not Symptom(id == $bapSymptom.id) from $appointment3.currentSymptoms
+
+then
+    System.out.println("RULE 2: Symptom bipolar affective disorder added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    $patient.getCurrentSymptoms().add($bapSymptom);
+    update($patient);
+end
+
+rule "Identify schizophrenia on Patient History"
+lock-on-active true
+when
+    $sSymptom : Symptom(name == "Shizofrenija", $sChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms, $sSymptom not memberOf currentSymptoms)
+    $symptom : Symptom($id: id, $symptomName: name) from $sSymptom.childSymptoms
+    
+    $appointment1: Appointment(patient == $patient, 
+                               $id1 : id,
+                               $date1: date,
+                               $symptom memberOf currentSymptoms,
+                               $sSymptom not memberOf currentSymptoms)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,
+    						   date.before(minusMonths($date1, 1)) == true,
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0,
+                               $symptom memberOf currentSymptoms,
+                               $sSymptom not memberOf currentSymptoms) 
+                            
+
+    $sNo: Number(intValue >= 4) from accumulate(
+        $s1: Symptom(
+            this memberOf $sChildSymptoms) from $patientSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE 2: Symptom schizophrenia added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    //$appointment.getCurrentSymptoms().add($gadSymptom);
+    $patient.getCurrentSymptoms().add($sSymptom);
+    $appointment1.getCurrentSymptoms().add($sSymptom);
+    update($patient)
+    update($appointment)
+end
+
+rule "Identify schizoaffective disorder on Patient History"
+lock-on-active true
+when
+    $saSymptom : Symptom(name == "Shizoafektivni poremećaj", $saChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms, $saSymptom not memberOf currentSymptoms)
+    $symptom : Symptom(name == "Depresija" || name == "Manična epizoda") from $patientSymptoms
+    $shizoSymptom: Symptom(name == "Shizofrenija") from $patientSymptoms
+
+    $appointment1: Appointment(patient == $patient, 
+                               $id1 : id,
+                               $date1: date,
+                               $symptom memberOf currentSymptoms,
+                               $saSymptom not memberOf currentSymptoms,
+                               $shizoSymptom memberOf currentSymptoms)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,
+    						   date.before(minusDays($date1, 14)) == true,
+                               currentSymptoms != null,
+                               currentSymptoms.size() > 0,
+                               $symptom not memberOf currentSymptoms,
+                               $shizoSymptom memberOf currentSymptoms,
+                               $saSymptom not memberOf currentSymptoms) 
+
+then
+    System.out.println("RULE 2: Symptom schizoaffective disorder added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    $patient.getCurrentSymptoms().add($saSymptom);
+    update($patient)
+end
+
+rule "Identify negative symptoms"
+when
+    $nSymptom : Symptom(name == "Negativni simptomi", $nId: id, $nChildSymptoms: childSymptoms)
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+
+    not Symptom(id == $nSymptom.id) from $patientSymptoms
+    
+    $sNo: Number(intValue >= 2) from accumulate(
+        $s1: Symptom(
+            id != $nId, 
+            this memberOf $nChildSymptoms) from $patientSymptoms,
+        count($s1)
+    )
+
+then
+    System.out.println("RULE: Symptom negative symptoms added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($nSymptom);
+    update($patient)
+end
+
+
+
+rule "Test Rule"
+when
+	$gadSymptom : Symptom(name == "Generalizovani anksiozni poremećaj")
+
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    $symptom : Symptom(name == "Anksioznost") from $patientSymptoms
+    
+    $appointment1: Appointment(patient == $patient, $id1 : id)
+    $appointment : Appointment(patient == $patient,
+    						   id != $id1,	
+                               date.before(monthsAgo(6)) == true) 
+
+then
+    System.out.println("AKTIVIRALO SE TEST PRAVILO ");
+ 
+end
+
+rule "Give therapy suggestions without allergies"
+lock-on-active true
+when
+    $therapies: List()
+    $patient: Patient($diagnosis: diagnosis, $currentTherapies: currentTherapies, $allergies: previousTherapies)
+    $appointment: Appointment(patient == $patient)
+    $diagnosis1: Symptom(this memberOf $diagnosis)
+    $suitableTherapies: List() from collect(
+        Therapy(
+            this not memberOf $allergies,
+            this not memberOf $therapies,
+            this not memberOf $currentTherapies,
+            $diagnosis1 memberOf therapyFor
+        )
+    )
+then
+	System.out.println("USLO u therapy pravilo");
+    $therapies.addAll($suitableTherapies);
+    update($therapies)
+end
+
+rule "Identify Izbjegavanje socijalnih situacija"
+when
+    $newSymptom : Symptom(name == "Izbjegavanje socijalnih situacija", $newSSymptoms: childSymptoms)
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    not Symptom(id == $newSymptom.id) from $patientSymptoms
+    $sNo: Number(intValue >= 2) from accumulate(
+        $s1: Symptom(this memberOf $newSSymptoms) from $patient.currentSymptoms,
+        count($s1)
+    )
+then
+    System.out.println("RULE: Symptom izbjegavanje socijalnih situacija added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($newSymptom);
+    update($patient)
+end
+
+rule "Identify Strah od socijalnih situacija"
+when
+    $newSymptom : Symptom(name == "Strah od socijalnih situacija", $newSSymptoms: childSymptoms)
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    not Symptom(id == $newSymptom.id) from $patientSymptoms
+    $sNo: Number(intValue >= 3) from accumulate(
+        $s1: Symptom(this memberOf $newSSymptoms) from $patient.currentSymptoms,
+        count($s1)
+    )
+then
+    System.out.println("RULE: Symptom Strah od socijalnih situacija added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($newSymptom);
+    update($patient)
+end

@@ -1,0 +1,100 @@
+html, body {
+    margin: 0%;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: stretch; /* Adjust alignment to stretch */
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.login-container {
+    display: flex;
+    flex: 1; /* Makes the login container take full width */
+    height: 100vh; /* Makes the login container take full height */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
+.login-info {
+    padding: 20px;
+    width: 66.66%; /* Adjusted to two-thirds */
+    background: #e0e0e0; /* Changed to light gray */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box; /* Includes padding in the height calculation */
+}
+.text-container {
+    width: 80%; /* More narrow width */
+    margin: 0 auto; /* Centering the text container */
+}
+.login-form {
+    padding: 5%;
+    width: 33.33%; /* Adjusted to one-third */
+    background: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Stretch to full container height */
+    box-sizing: border-box; /* Includes padding in the height calculation */
+}
+.login-form input {
+    width: 100%; /* Further narrowed */
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: black; /* Ensures placeholder text is black */
+}
+.login-form button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+    border: none;
+    width: 100%; /* Button width adjusted to match input fields */
+}
+.login-form button:hover {
+    background-color: #333;
+}
+.login-form h2 {
+    color: white;
+    margin-bottom: 20px;
+    text-align: left; /* Left-aligned Welcome text */
+}
+img {
+    width: 25%; /* Adjust image size */
+    margin: 0 auto 5px; /* Center image horizontally */
+}
+
+.login-info p {
+    font-size: 33px; /* Increased font size for the description text */
+    padding: 2%;
+    line-height: 100%;
+    width: 100%;
+}
+
+.error {
+	font-family: Snell Roundhand, cursive;
+	font-size: 17px;
+	text-align: center;
+}
+
+.register a {
+    width: 100%;
+    text-align: center;
+    padding-left: 70%;
+    color: #ededed;
+    cursor: pointer;
+} 

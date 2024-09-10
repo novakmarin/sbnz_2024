@@ -42,10 +42,10 @@ public class MentalIllnessService {
         mentalIllnessRepository.deleteById(id);
     }
 
-    // Retrieve all parent symptoms of a given MentalIllness ID
-    public List<Symptom> findAllParentSymptomsByMentalIllnessId(Long mentalIllnessId) {
-        return mentalIllnessRepository.findAllParentSymptomsBySymptomId(mentalIllnessId);
-    }
+//    // Retrieve all parent symptoms of a given MentalIllness ID
+//    public List<Symptom> findAllParentSymptomsByMentalIllnessId(Long mentalIllnessId) {
+//        return mentalIllnessRepository.findAllParentSymptomsBySymptomId(mentalIllnessId);
+//    }
 
     // Retrieve all child symptoms of a given MentalIllness ID
     public List<Symptom> findAllChildSymptomsByMentalIllnessId(Long mentalIllnessId) {

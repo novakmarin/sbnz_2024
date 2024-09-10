@@ -15,7 +15,9 @@ import java.util.Set;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-    Optional<Patient> findByHealthCardId(String healthCardId);
+    Patient findByHealthCardId(String healthCardId);
+    
+    Optional<Patient> findById(Long id);
 
     List<Patient> findByPreviousDiagnosisId(Long diagnosisId);
 

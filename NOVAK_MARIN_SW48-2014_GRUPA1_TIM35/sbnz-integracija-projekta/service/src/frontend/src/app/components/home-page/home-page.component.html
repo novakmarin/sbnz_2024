@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAPPUD</title>
+    <link rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo-white.png" alt="SAPPUD Logo">
+            <h1>~SAPPUD~</h1>
+            <hr>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/home/appointment">Početna strana</a></li>
+                <li><a href="/home/appointment">Započni pregled</a></li>
+                <li><a href="/home/addPatient">Dodaj pacijenta</a></li>
+                <li><a href="/home/newRule">Dodaj pravila</a></li>
+                <li><a href="/home/reports">Izvještaji</a></li>
+            </ul>
+        </nav>
+        <footer>
+            <hr>
+            <p>Dr. {{doctorName}} {{doctorLastName}}</p>
+            <div class = "logoutButton">
+                <p> <a href="#">Odjava</a> </p>
+            </div>
+            
+        </footer>
+    </div>
+    <div class="content">
+        <!-- Main content goes here -->
+        <router-outlet></router-outlet>
+    </div>
+</body>
+</html>

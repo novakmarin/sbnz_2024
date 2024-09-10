@@ -1,12 +1,33 @@
 package com.ftn.sbnz.service.services;
 
+import org.kie.api.runtime.KieContainer;
+
+
+import java.io.InputStream;
+
+import org.drools.template.DataProvider;
+import org.drools.template.DataProviderCompiler;
+import org.drools.template.ObjectDataCompiler;
+import org.drools.template.objects.ArrayDataProvider;
+
+import org.kie.api.builder.Message;
+import org.kie.api.builder.Results;
+import org.kie.api.io.ResourceType;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Appointment;
+import com.ftn.sbnz.model.models.NewRuleTemplateModel;
+import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Therapy;
+import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.service.repository.AppointmentRepository;
+import com.ftn.sbnz.service.repository.TherapyRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,16 +36,150 @@ import java.util.Optional;
 @Transactional
 public class AppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
-
+	@Autowired
+    private AppointmentRepository appointmentRepository;
+    
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository) {
-        this.appointmentRepository = appointmentRepository;
-    }
-
+    PatientService patientService;
+    
+    @Autowired
+    SymptomService symptomService;
+    
+    @Autowired
+    TherapyRepository therapyRepository;
+    
+    @Autowired
+    NewRuleTemplateModelService nrtmService;
+    
+    @Autowired
+    KieContainer kieContainer;
+    
     public Appointment saveAppointment(Appointment appointment) {
+    	
+    	List<Symptom> symptoms = new ArrayList<Symptom>();
+    	List<Symptom> diagnosis = new ArrayList<Symptom>();
+    	List<Therapy> therapies = new ArrayList<Therapy>();
+    	for(Symptom s: appointment.getPatient().getCurrentSymptoms()) {
+    		symptoms.add(symptomService.findSymptomByName(s.getName()));
+    	}
+    	for(Symptom s: appointment.getPatient().getDiagnosis()) {
+    		diagnosis.add(symptomService.findSymptomByName(s.getName()));
+    	}
+    	for(Therapy t: appointment.getPatient().getCurrentTherapies()) {
+    		therapies.add(therapyRepository.findByName(t.getName()).get());
+    	}
+    	appointment.setCurrentSymptoms(symptoms);
+    	Patient patient = patientService.getPatientById(appointment.getPatient().getId()).get();
+    	patient.setCurrentSymptoms(symptoms);
+    	patient.setDiagnosis(diagnosis);
+    	patient.setCurrentTherapies(therapies);
+    	appointment.setPatient(patient);
+    	
         return appointmentRepository.save(appointment);
     }
+    
+    public Appointment fireRules(Appointment appointment) {
+    	
+    	
+    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
+    	List<Appointment> allAppointments = this.findAllAppointments();
+    	for(Symptom s: allSymptoms) {
+    		kieSession.insert(s);
+    	}
+    	for(Appointment a: allAppointments) {
+    		System.out.println("APPOINTMENTS START");
+    		System.out.println(a.getDate().toString());
+    		System.out.println("APPOINTMENTS END");
+    		kieSession.insert(a);
+    	}
+
+    	kieSession.insert(appointment);
+    	kieSession.insert(appointment.getPatient());
+    	
+    	
+    	kieSession.fireAllRules();
+    	kieSession.dispose();
+    	
+    	boolean hasCustomSymptom = false;
+    	for (Symptom symptom : appointment.getCurrentSymptoms()) {
+    	    if (symptom.isCustomSymptom()) {
+    	    	System.out.println(symptom.isCustomSymptom());
+    	        hasCustomSymptom = true;
+    	        break; // Exit the loop early since we found a custom symptom
+    	    }
+    	}
+    	if(hasCustomSymptom) {
+    		appointment = fireCustomRules(appointment, allSymptoms, allAppointments);
+    	}
+    	
+    	return appointment;
+    }
+    
+    public Appointment fireCustomRules(Appointment appointment, List<Symptom> allSymptoms, List<Appointment> allAppointments) {
+    	InputStream template = AppointmentService.class.getResourceAsStream("/rules/templatetable/new-rule.drt");
+        List<NewRuleTemplateModel> data = nrtmService.getAll();
+        
+        ObjectDataCompiler converter = new ObjectDataCompiler();
+        String drl = converter.compile(data, template);
+        
+        System.out.println(drl);
+        
+        KieSession ksession = createKieSessionFromDRL(drl);
+        
+        for(Symptom s: allSymptoms) {
+    		ksession.insert(s);
+    	}
+    	for(Appointment a: allAppointments) {
+    		ksession.insert(a);
+    	}
+    	
+    	ksession.insert(appointment);
+    	ksession.insert(appointment.getPatient());
+    	
+    	ksession.fireAllRules();
+    	ksession.dispose();
+    	
+    	return appointment;
+    }
+    
+    public void testSimpleTemplateWithObjects(){
+        
+        InputStream template = AppointmentService.class.getResourceAsStream("/rules/templatetable/new-rule.drt");
+
+        
+        List<NewRuleTemplateModel> data = new ArrayList<NewRuleTemplateModel>();
+        
+        data.add(new NewRuleTemplateModel(1L, "OCD", 2));
+        
+        ObjectDataCompiler converter = new ObjectDataCompiler();
+        String drl = converter.compile(data, template);
+        
+        System.out.println(drl);
+        
+        KieSession ksession = createKieSessionFromDRL(drl);
+        ksession.fireAllRules();
+        ksession.dispose();
+        
+    }
+
+	private KieSession createKieSessionFromDRL(String drl){
+	    KieHelper kieHelper = new KieHelper();
+	    kieHelper.addContent(drl, ResourceType.DRL);
+	    
+	    Results results = kieHelper.verify();
+	    
+	    if (results.hasMessages(Message.Level.WARNING, Message.Level.ERROR)){
+	        List<Message> messages = results.getMessages(Message.Level.WARNING, Message.Level.ERROR);
+	        for (Message message : messages) {
+	            System.out.println("Error: "+message.getText());
+	        }
+	        
+	        throw new IllegalStateException("Compilation errors were found. Check the logs.");
+	    }
+	    
+	    return kieHelper.build().newKieSession();
+	}
 
     public Optional<Appointment> findAppointmentById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId);

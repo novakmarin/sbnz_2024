@@ -1,0 +1,119 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #e0e0e0;
+}
+
+.sidebar {
+    width: 20%;
+    height: 100%;
+    background-color: #333;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    padding-bottom: 0px;
+    box-sizing: border-box;
+    position: fixed;
+    text-align: center; /* Center align text in the sidebar */
+}
+
+.sidebar .logoutButton{
+    font-size: 12px;
+    margin-top: -10px;
+    
+}
+
+.sidebar .logoutButton a{
+    color: white;
+    text-decoration: none;
+}
+
+.logo {
+    text-align: center;
+}
+
+.logo img {
+    width: 50%;
+
+}
+
+.logo h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 15px 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    width: 100%;
+}
+
+nav ul li a:hover {
+    color: #bbbbbb;
+}
+
+footer {
+    text-align: center;
+    font-size: 14px;
+    padding: 20px 0;
+    border-top: 1px solid #555;
+}
+
+.content {
+    margin-left: 20%; /* Adjust based on the sidebar width */
+    padding: 12px;
+    background-color: #e0e0e0;
+
+}
+
+.login-form {
+    padding: 20px;
+    width: 100%; /* Adjusted to one-third */
+    background: #bbbbbbbb;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Stretch to full container height */
+    box-sizing: border-box; /* Includes padding in the height calculation */
+}
+.login-form input {
+    width: 96%; /* Further narrowed */
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: black; /* Ensures placeholder text is black */
+}
+.login-form button {
+    padding: 10px;
+    height: 50%;
+    font-size: 30px;
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+    border: none;
+    width: 100%; /* Button width adjusted to match input fields */
+}
+.login-form button:hover {
+    background-color: #333;
+}
+.login-form h2 {
+    color: rgb(0, 0, 0);
+    margin-bottom: 20px;
+    text-align: left; /* Left-aligned Welcome text */
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Screen</title>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-info">
+        <img src="logo.png" alt="Logo">
+        <div class="text-container">
+            <h2><b>~SAPPUD~</b></h2>
+
+            <p><i>Sistem za asistenciju psihijatrima prilikom uspostavljanja dijagnoza</i></p>
+        </div>
+    </div>
+    <div  class="login-form" >
+        <form *ngIf="!registrationActive" #loginForm="ngForm" (ngSubmit)="onSubmit()">
+            <h2>Dobrodošli!</h2>
+            <input type="text" id="username" name="username" placeholder="Korisničko ime" [(ngModel)]="username" required>
+            <input type="password" id="password" name="password" placeholder="Lozinka" [(ngModel)]="password" required>
+            <button pButton type="submit" label = "Login" [disabled]="!loginForm.form.valid" >Prijava</button>
+            <div class = "register"><a (click)="toggleReg()">Registracija</a></div>
+            <p-messages [(value)]="msgs"></p-messages>
+        </form>
+        <form *ngIf="registrationActive" #registrationForm="ngForm" (ngSubmit)="register()">
+            <h2>Unesite podatke</h2>
+            <input type="text" id="firstName" name="firstName" placeholder="Ime" [(ngModel)]="newDoctor.firstName" required>
+            <input type="text" id="lasttName" name="lastName" placeholder="Prezime" [(ngModel)]="newDoctor.lastName" required>
+            <input type="text" id="username" name="username" placeholder="Korisničko ime" [(ngModel)]="newDoctor.username" required>
+            <input type="password" id="password" name="password" placeholder="Lozinka" [(ngModel)]="newDoctor.password" required>
+            <button pButton type="submit" label = "Registracija" [disabled]="!registrationForm.form.valid" >Registracija</button>
+            <div class = "register"><a (click)="toggleReg()">Log in</a></div>
+            <p-messages [(value)]="msgs"></p-messages>
+        </form>
+    </div>
+    
+    <div *ngIf="error" class="error">{{error}}</div>
+</div>
+</body>
+</html>

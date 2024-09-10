@@ -2,6 +2,7 @@ package com.ftn.sbnz.model.models;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,9 +59,16 @@ public class Patient {
 	@JoinTable(name = "patient_previous_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> previousSymptoms;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "patient_current_symptoms", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
 	private List<Symptom> currentSymptoms;
+	
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "patient_diagnosis", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
+	private List<Symptom> diagnosis;
+	
 
 	public Patient() {
 		super();
@@ -68,7 +76,7 @@ public class Patient {
 
 	public Patient(Long id, String healthCardId, String firstName, String lastName, Date dob,
 			List<Diagnosis> previousDiagnosis, List<Therapy> previousTherapies, List<Diagnosis> currentDiagnosis,
-			List<Therapy> currentTherapies, List<Symptom> previousSymptoms, List<Symptom> currentSymptoms) {
+			List<Therapy> currentTherapies, List<Symptom> previousSymptoms, List<Symptom> currentSymptoms, List<Symptom> diagnosis) {
 		super();
 		this.id = id;
 		this.healthCardId = healthCardId;
@@ -81,6 +89,7 @@ public class Patient {
 		this.currentTherapies = currentTherapies;
 		this.previousSymptoms = previousSymptoms;
 		this.currentSymptoms = currentSymptoms;
+		this.diagnosis = diagnosis;
 	}
 
 	public Long getId() {
@@ -171,6 +180,14 @@ public class Patient {
 		this.currentSymptoms = currentSymptoms;
 	}
 
+	public List<Symptom> getDiagnosis() {
+		return diagnosis;
+	}
+
+	public void setDiagnosis(List<Symptom> diagnosis) {
+		this.diagnosis = diagnosis;
+	}
+
 	@Override
 	public String toString() {
 		return "Patient [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", dob=" + dob
@@ -178,5 +195,25 @@ public class Patient {
 				+ ", currentDiagnosis=" + currentDiagnosis + ", currentTherapies=" + currentTherapies
 				+ ", previousSymptoms=" + previousSymptoms + ", currentSymptoms=" + currentSymptoms + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, healthCardId, id, lastName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Patient other = (Patient) obj;
+		return Objects.equals(firstName, other.firstName) && Objects.equals(healthCardId, other.healthCardId)
+				&& Objects.equals(id, other.id) && Objects.equals(lastName, other.lastName);
+	}
+	
+	
 
 }

@@ -1,0 +1,222 @@
+.form-field .patient-data .refresh-button{
+    color: white;
+    height: 70%;
+    width: 70%;
+    padding-bottom: 15%;
+  }
+  
+  .login-form {
+      
+      width: 100%; /* Adjusted to one-third */
+      background: #babababb;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 540px; /* Stretch to full container height */
+      box-sizing: border-box; /* Includes padding in the height calculation */
+  }
+  .login-form input {
+      width: 100%; /* Further narrowed */
+      margin-bottom: 20px;
+      padding: 10px;
+      font-size: 16px;
+      color: black; /* Ensures placeholder text is black */
+  }
+  .login-form button {
+      padding: 10px;
+      height: 50%;
+      font-size: 30px;
+      cursor: pointer;
+      background-color: #555;
+      color: white;
+      border: none;
+      width: 100%; /* Button width adjusted to match input fields */
+  }
+  .login-form button:hover {
+      background-color: #333;
+  }
+  .login-form h2 {
+      color: rgb(0, 0, 0);
+      margin-bottom: 20px;
+      text-align: left; /* Left-aligned Welcome text */
+      font-size: 30px;
+  }
+  
+  .chip-border{
+    margin-top: 20px;
+  }
+  
+  .custom-chip{
+      background-color: #404040; /* Change this to your preferred color */
+      color: white; /* Adjust text color if needed */
+      padding-left: 10px; 
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: large;
+      font-weight: 550;
+      border-radius: 10px;
+      margin: 5px;
+      /* margin: 1%;
+      padding-left: 10px;
+      font-size: large;
+      font-weight: 550;
+      padding-bottom: 5px;
+      border-radius: 10px;
+      height: 120px; */
+      
+  }
+  .custom-chip button{
+      background-color: #404040; 
+      border-radius: 10px;
+      height: 30px;
+      padding: 10px;
+      font-size: 30px;
+  }
+  
+  .custom-chip button:hover{
+      background-color: #ff0000;
+  }
+  
+  .diagnosis-chip{
+      background-color: #a3a3a3; /* Change this to your preferred color */
+      color: white; /* Adjust text color if needed */
+      padding-left: 10px; 
+      padding-right: 10px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: large;
+      font-weight: 550;
+      border-radius: 10px;
+      margin: 5px;
+  
+  }
+  
+  .diagnosis-chip button{
+    background-color: #a3a3a3; 
+    border-radius: 10px;
+    height: 15px;
+  }
+  
+  .diagnosis-chip button:hover{
+    background-color: #ff0000;
+  }
+  
+  
+  .diagnosis-chip-final{
+    background-color: #404040; /* Change this to your preferred color */
+      color: white; /* Adjust text color if needed */
+      padding-left: 10px; 
+      padding-right: 10px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: large;
+      font-weight: 550;
+      border-radius: 10px;
+      margin: 5px;
+  }
+  
+  .custom-chip button{
+      background-color: #404040; 
+      border-radius: 10px;
+      height: 15px;
+  }
+  
+  .custom-chip button:hover{
+      background-color: #ff0000;
+  }
+  
+  .diagnosis-chip:hover{
+    background-color: #5f5f5f;
+    cursor: pointer;
+  }
+  
+  .diagnosis-chip-border{
+    margin-top: 20px;
+    cursor: pointer;
+  }
+  
+  .diagnosis-chip-border1{
+    margin-top: 20px;
+    cursor: pointer;
+  }
+  
+  
+  .form-container {
+      width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: rgb(244, 244, 244);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      /*border-radius: 10px;*/
+    }
+  
+    .form-field {
+      margin-bottom: 20px;
+    }
+  
+    .form-field p{
+      color:#404040;
+      font-size: x-large;
+    }
+  
+    .patient-data{
+      display: grid; 
+      grid-template-columns: repeat(4, auto);
+    }
+  
+    .form-field label{
+      color:rgb(25, 25, 25)
+    }
+  
+    .form-field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  
+    .form-field input, .form-field {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+  
+    ::ng-deep .p-datepicker-trigger {
+      background-color: #333; /* Change to your desired color */
+    }
+  
+    .diagnosis-chip-final button{
+      background-color: #404040; 
+      border-radius: 10px;
+      height: 15px;
+    }
+  
+    .diagnosis-chip-final button:hover{
+      background-color: #ff0000;
+    }
+
+
+    .p-button {
+        padding-left: 43%;
+        padding-bottom: 2.5%;
+        font-size: 25px;
+        color: white;
+        background-color: #555;
+        text-align: center;
+        height: 100%;
+        width: 100%; /* Button width adjusted to match input fields */
+      }
+    
+    .p-button:hover {
+        background-color: #333;
+    }
+  
+  
+  
+  
+  
+  
+  
