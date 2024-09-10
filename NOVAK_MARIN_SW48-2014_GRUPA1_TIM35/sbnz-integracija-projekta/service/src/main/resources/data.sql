@@ -129,8 +129,12 @@ VALUES
 -- Inserts for patient table
 INSERT INTO patient(id, dob, first_name, health_card_id, last_name) 
 VALUES
-('1', '1984-07-02', 'Marko', 'QWER122', 'Markovic'),
-('2', '1992-06-02', 'Backwards', 'QWER222', 'Backwardsic');
+(1, '1984-07-02', 'Marko', 'QWER122', 'Markovic'),
+(2, '1992-06-02', 'Backwards', 'QWER222', 'Backwardsic'),
+(3, '1982-06-11', 'Forward', 'QWERForward123', 'Example'),
+(4, '1981-02-10', 'Petar', 'QWER001', 'Petrović');
+-- (5, '1980-01-08', 'Stanko', 'QWER002', 'Stanković'),
+-- (6, '1979-02-02', 'Milan', 'QWER004', 'Milanović');
 
 
 -- Inserts for patient_current_symptoms table
@@ -140,7 +144,38 @@ VALUES
 (1, 35),
 (1, 24),
 (1, 36),
-(2, 32);
+(2, 32),
+(3, 55),
+(3, 56),
+(3, 34),
+(3, 19),
+(3, 18),
+(3, 7),
+(3, 6),
+(4, 33),
+(4, 47),
+(4, 49),
+(4, 27),
+(4, 44),
+(4, 50),
+(4, 26),
+(4, 31),
+(4, 29),
+(4, 48);
+-- (5, 46),
+-- (5, 33),
+-- (5, 29),
+-- (5, 31),
+-- (5, 26),
+-- (6, 45),
+-- (6, 33),
+-- (6, 26),
+-- (6, 29),
+-- (6, 23);
+
+INSERT INTO patient_diagnosis (patient_id, symptom_id)
+VALUES
+(4, 48);
 
 
 -- Inserts for appointment table
@@ -295,3 +330,19 @@ VALUES
 (23, 48),
 (24, 45),
 (24, 46);
+
+-- INSERT INTO patient(id, dob, first_name, health_card_id, last_name) 
+-- VALUES
+-- (7, '1980-01-09', 'Mitar', 'QWER005', 'Mitrović');
+
+-- INSERT INTO patient_current_symptoms(patient_id, symptom_id) 
+-- VALUES
+-- (7, 46),
+-- (7, 33),
+-- (7, 29),
+-- (7, 31),
+-- (7, 26);
+
+-- INSERT INTO patient_diagnosis (patient_id, symptom_id)
+-- VALUES
+-- (7, 46);

@@ -70,8 +70,8 @@ public class PatientService {
     
     public List<Patient> findPatientsWithSymptom(Symptom symptom) {
     	KieSession kieSession = kieContainer.newKieSession("bwKsession");
-    	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
-    	ArrayList<Patient> allPatients = (ArrayList<Patient>) patientRepository.findAll();
+    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
+    	List<Patient> allPatients = patientRepository.findAll();
     	for(Symptom s: allSymptoms) {
     		if(!s.getName().equals(symptom.getName())) {
         		kieSession.insert(s);
