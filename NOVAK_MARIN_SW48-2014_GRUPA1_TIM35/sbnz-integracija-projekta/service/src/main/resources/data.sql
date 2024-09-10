@@ -11,7 +11,7 @@ VALUES
 ('Symptom', 2,  NULL, false, false, false, 'Poteškoće sa ustajanjem iz kreveta'),
 ('Symptom', 3,  NULL, false, false, false, 'Insomnija'),
 ('Symptom', 4,  NULL, false, false, false, 'Hipersomnija'),
-('Symptom', 5,  NULL, false, false, false, 'Izbjegavanje socijalnih situacija'),
+('Symptom', 5,  NULL, true, false, false, 'Izbjegavanje socijalnih situacija'),
 ('Symptom', 6,  NULL, false, false, false, 'Znojenje'),
 ('Symptom', 7,  NULL, false, false, false, 'Crvenilo u licu'),
 ('Symptom', 8,  NULL, false, false, false, 'Drhtanje'),
@@ -34,7 +34,7 @@ VALUES
 ('Symptom', 25, NULL, false, false, false, 'Povećana motivacija'),
 ('Symptom', 26, NULL, true, false, false, 'Manjak volje'),
 ('Symptom', 27, NULL, true, false, false, 'Halucinacije'),
-('Symptom', 28, NULL, false, false, false, 'Strah od socijalnih situacija'),
+('Symptom', 28, NULL, true, false, false, 'Strah od socijalnih situacija'),
 ('Symptom', 29, NULL, true, false, false, 'Problemi sa snom'),
 ('Symptom', 30, NULL, false, false, false, 'Anksioznost'),
 ('Symptom', 31, NULL, false, false, false, 'Manjak energije'),
@@ -59,11 +59,17 @@ VALUES
 ('Symptom', 50, NULL , false,false,  false, 'Katatonija'),
 ('Symptom', 51, NULL , true,false,  false, 'Negativni simptomi'),
 ('Symptom', 52, NULL , false,false,  false, 'Anhedonija'),
-('Symptom', 53, NULL , false,false,  false, 'Zaravnjen afekt');
+('Symptom', 53, NULL , false,false,  false, 'Zaravnjen afekt'),
+('Symptom', 54, NULL , false,false,  false, 'Izbjegavanje javnih nastupa'),
+('Symptom', 55, NULL , false,false,  false, 'Strah od izlaska iz kuće'),
+('Symptom', 56, NULL , false,false,  false, 'Povlačenje iz društva');
 
 -- Inserts for symptom_relationship table (unchanged)
 INSERT INTO symptom_relationship (parent_symptom_id, child_symptom_id) 
 VALUES 
+(5, 54),
+(5, 55),
+(5, 56),
 (26, 1),
 (26, 2),
 (26, 16),

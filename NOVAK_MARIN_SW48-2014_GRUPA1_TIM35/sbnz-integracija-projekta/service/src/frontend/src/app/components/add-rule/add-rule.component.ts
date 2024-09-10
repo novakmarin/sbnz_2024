@@ -230,7 +230,7 @@ export class AddRuleComponent {
               console.log("USLO U SELECT 1")
               therapy.therapyFor?.push(this.symptom);
               this.selectedTherapies?.push(therapy);
-              this.selectedItem = '';
+              this.selectedItem1 = '';
           }
   }
 
