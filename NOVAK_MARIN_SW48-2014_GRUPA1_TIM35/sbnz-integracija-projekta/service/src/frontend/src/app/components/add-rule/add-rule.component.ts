@@ -19,6 +19,8 @@ import { AppointmentService } from '../../services/appointment.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NewRuleTemplateModel } from '../../model/newRuleTemplateModel';
 import { NrtmService } from '../../services/nrtm.service';
+import { Therapy } from '../../model/therapy';
+import { TherapyService } from '../../services/therapy.service';
 
 
 
@@ -28,7 +30,7 @@ import { NrtmService } from '../../services/nrtm.service';
   imports: [MatCheckboxModule, FormsModule, CommonModule, MessagesModule, AutoCompleteModule, ChipsModule, MatChipsModule,
     MatFormFieldModule, MatIconModule, MatAutocompleteModule, InputTextareaModule
   ],
-  providers: [PatientService, MessageService, SymptomService, AppointmentService, NrtmService],
+  providers: [PatientService, MessageService, SymptomService, AppointmentService, NrtmService, TherapyService],
   templateUrl: './add-rule.component.html',
   styleUrl: './add-rule.component.css'
 })
@@ -37,34 +39,46 @@ export class AddRuleComponent {
   items: string[] = [];
   filteredItems: string[];
   selectedItem: string;
+  items1: string[] = [];
+  filteredItems1: string[];
+  selectedItem1: string;
   error: string;
   errorMessage: string;
   allSymptoms: Symptom[];
   symptom: Symptom;
   msgs: any;
   nrtm: NewRuleTemplateModel;
+  allTherapies: Therapy[];
+  selectedTherapies: Therapy[];
 
   constructor(
     private patientService: PatientService,
     private symptomService: SymptomService, 
     private messageService: MessageService,
     private appointmentService: AppointmentService,
-    private nrtmService: NrtmService)
+    private nrtmService: NrtmService,
+    private therapyService: TherapyService)
   {
 
     this.error = '';
     this.errorMessage = '';
     this.allSymptoms = [];
+    this.allTherapies = [];
     this.filteredItems = [];
     this.selectedItem = '';
+    this.filteredItems1 = [];
+    this.selectedItem1 = '';
     this.symptom = new Symptom(0, '', '', false, false, true, []);
     this.nrtm = new NewRuleTemplateModel(1000, '', 1);
+    this.selectedTherapies = [];
 
     this.setAutocompleteItems();
   }
 
   ngOnInit(): void {
     this.fetchAllSymptoms();
+    this.fetchAllTherapies();
+    
   }
 
   fetchAllSymptoms(): void{
@@ -78,6 +92,22 @@ export class AddRuleComponent {
       },
       complete: () => {
         console.log('Symptom fetch operation completed.');
+      }
+    });
+    
+  }
+
+  fetchAllTherapies(): void{
+    this.therapyService.getAllTherapies().subscribe({
+      next: (data: Therapy[]) => {
+        this.allTherapies = data;
+        console.log('Therapies fetched successfully');
+      },
+      error: (err) => {
+        console.error('Error fetching therapies', err);
+      },
+      complete: () => {
+        console.log('Therapy fetch operation completed.');
         this.setAutocompleteItems();
       }
     });
@@ -89,11 +119,20 @@ export class AddRuleComponent {
       console.log(`Symptom ${index + 1}: ${symptom.name}`);
       this.items.push(symptom.name);
     });
+    this.allTherapies.forEach((therapy, index) => {
+      console.log(`Therapy ${index + 1}: ${therapy.name}`);
+      this.items1.push(therapy.name || '');
+    });
   }
 
   filterItems(event: any): void {
     let query = event.query;
     this.filteredItems = this.items.filter(item => item.toLowerCase().includes(query.toLowerCase()));
+  }
+
+  filterItems1(event: any): void {
+    let query = event.query;
+    this.filteredItems1 = this.items1.filter(item => item.toLowerCase().includes(query.toLowerCase()));
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -115,10 +154,13 @@ export class AddRuleComponent {
   }
 
   onSubmit(): void {
+    this.symptom.customSymptom = true;
     this.symptomService.createSymptom(this.symptom).subscribe({
       next: (data: Symptom) => {
         this.symptom = data;
-        this.saveNRTM(this.nrtm);
+        if(this.symptom.hasSpecialDiagnostics){
+          this.saveNRTM(this.nrtm);
+        }
       },
       error: (error) => {
         console.error('Error saving appointment', error);
@@ -129,6 +171,7 @@ export class AddRuleComponent {
         console.log('Symptom saved successfully');
         this.messageService.clear();
         this.messageService.add({severity:'success', summary: 'Nalaz uspješno sačuvan.', detail: this.error});
+        this.updateTherapies(this.selectedTherapies);
         //this.msgs.push({severity:'success', summary:'Info Message', detail:'PrimeNG rocks'});
       }
     });
@@ -152,5 +195,46 @@ export class AddRuleComponent {
         //this.msgs.push({severity:'success', summary:'Info Message', detail:'PrimeNG rocks'});
       }
     });
+  }
+
+  updateTherapies(therapies: Therapy[]){
+    therapies.forEach((therapy, index) => {
+      console.log(`Therapy ${index + 1}: ${therapy.name}`);
+      this.updateTherapy(therapy);
+    });
+  }
+
+  updateTherapy(therapy: Therapy){
+    this.therapyService.updateTherapy(therapy).subscribe({
+      next: (data: NewRuleTemplateModel) => {
+        console.log("Therapy updated successfully.")
+      },
+      error: (error) => {
+        console.error('Error updating therapy.', error);
+      },
+      complete: () => {
+        console.log('Therapy updated successfully');
+      }
+    });
+  }
+
+  onKeyDown1(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+        this.onSelect1();
+    }
+  }
+  
+  onSelect1(){
+      const therapy = this.allTherapies.find(therapy => therapy.name?.toLowerCase() === this.selectedItem1?.toLowerCase());
+          if (therapy && !this.selectedTherapies?.some(therapy1 => therapy1.name === therapy?.name)) {
+              console.log("USLO U SELECT 1")
+              therapy.therapyFor?.push(this.symptom);
+              this.selectedTherapies?.push(therapy);
+              this.selectedItem = '';
+          }
+  }
+
+  removeTherapyChip(index: number): void {
+    this.selectedTherapies?.splice(index, 1);
   }
 }

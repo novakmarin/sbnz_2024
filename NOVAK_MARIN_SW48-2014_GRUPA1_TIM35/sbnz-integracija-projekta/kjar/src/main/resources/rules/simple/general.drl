@@ -332,46 +332,6 @@ then
     update($patient)
 end
 
-query hasASymptom(Patient patient, Symptom symptom)
-    $symptom: Symptom( symptom.name; ) from patient.currentSymptoms
-    or
-    //mozda current
-    ($newParent: Symptom() from patient.currentSymptoms
-    and
-    //$symptom1: Symptom( symptom.name; )
-    isASubsymptomOf(symptom, $newParent;))
-end
-
-query isASubsymptomOf(Symptom child, Symptom parent)
-    $parentSymptom: Symptom( parent.name; childSymptoms != null)
-    Symptom( child.name; ) from $parentSymptom.childSymptoms
-    or
-    ($subsymptom: Symptom() from $parentSymptom.childSymptoms
-    and
-    //vrv greska arg 2
-    eval($subsymptom != null)
-    and
-    isASubsymptomOf(child, $subsymptom;))
-end
-
-rule "Getting patient with a symptom"
-lock-on-active true
-when
-    $patients: List()
-    $symptomName: String()
-    $p: Patient()
-    $s: Symptom(name == $symptomName)
-    not Patient( id == $p.id) from $patients
-    //$s1: Symptom(name == "Briga")
-    //$s2: Symptom(name == "Socijalna anksioznost")
-    hasASymptom( $p, $s; )
-    //isASubsymptomOf( $s1, $s2; )
-then
-    System.out.println("\nRULE 4 BACKWARDS: Patient:");
-    System.out.println($p.getFirstName() + " " + $p.getLastName());
-    System.out.println("has " + $s.getName() + ".\n");
-    modify($patients){ add($p) }
-end
 
 
 rule "Test Rule"
@@ -389,4 +349,25 @@ when
 then
     System.out.println("AKTIVIRALO SE TEST PRAVILO ");
  
+end
+
+rule "Give therapy suggestions without allergies"
+lock-on-active true
+when
+    $therapies: List()
+    $patient: Patient($diagnosis: diagnosis, $currentTherapies: currentTherapies, $allergies: previousTherapies)
+    $appointment: Appointment(patient == $patient)
+    $diagnosis1: Symptom(this memberOf $diagnosis)
+    $suitableTherapies: List() from collect(
+        Therapy(
+            this not memberOf $allergies,
+            this not memberOf $therapies,
+            this not memberOf $currentTherapies,
+            $diagnosis1 memberOf therapyFor
+        )
+    )
+then
+	System.out.println("USLO u therapy pravilo");
+    $therapies.addAll($suitableTherapies);
+    update($therapies)
 end

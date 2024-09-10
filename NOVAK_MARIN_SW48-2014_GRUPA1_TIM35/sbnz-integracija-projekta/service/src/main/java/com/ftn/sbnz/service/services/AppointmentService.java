@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ftn.sbnz.model.models.Appointment;
 import com.ftn.sbnz.model.models.NewRuleTemplateModel;
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Therapy;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.service.repository.AppointmentRepository;
+import com.ftn.sbnz.service.repository.TherapyRepository;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +46,9 @@ public class AppointmentService {
     SymptomService symptomService;
     
     @Autowired
+    TherapyRepository therapyRepository;
+    
+    @Autowired
     NewRuleTemplateModelService nrtmService;
     
     @Autowired
@@ -53,22 +58,65 @@ public class AppointmentService {
     	
     	List<Symptom> symptoms = new ArrayList<Symptom>();
     	List<Symptom> diagnosis = new ArrayList<Symptom>();
+    	List<Therapy> therapies = new ArrayList<Therapy>();
     	for(Symptom s: appointment.getPatient().getCurrentSymptoms()) {
     		symptoms.add(symptomService.findSymptomByName(s.getName()));
     	}
     	for(Symptom s: appointment.getPatient().getDiagnosis()) {
     		diagnosis.add(symptomService.findSymptomByName(s.getName()));
     	}
+    	for(Therapy t: appointment.getPatient().getCurrentTherapies()) {
+    		therapies.add(therapyRepository.findByName(t.getName()).get());
+    	}
     	appointment.setCurrentSymptoms(symptoms);
     	Patient patient = patientService.getPatientById(appointment.getPatient().getId()).get();
     	patient.setCurrentSymptoms(symptoms);
     	patient.setDiagnosis(diagnosis);
+    	patient.setCurrentTherapies(therapies);
     	appointment.setPatient(patient);
     	
         return appointmentRepository.save(appointment);
     }
     
     public Appointment fireRules(Appointment appointment) {
+    	
+    	
+    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
+    	List<Appointment> allAppointments = this.findAllAppointments();
+    	for(Symptom s: allSymptoms) {
+    		kieSession.insert(s);
+    	}
+    	for(Appointment a: allAppointments) {
+    		System.out.println("APPOINTMENTS START");
+    		System.out.println(a.getDate().toString());
+    		System.out.println("APPOINTMENTS END");
+    		kieSession.insert(a);
+    	}
+
+    	kieSession.insert(appointment);
+    	kieSession.insert(appointment.getPatient());
+    	
+    	
+    	kieSession.fireAllRules();
+    	kieSession.dispose();
+    	
+    	boolean hasCustomSymptom = false;
+    	for (Symptom symptom : appointment.getCurrentSymptoms()) {
+    	    if (symptom.isCustomSymptom()) {
+    	    	System.out.println(symptom.isCustomSymptom());
+    	        hasCustomSymptom = true;
+    	        break; // Exit the loop early since we found a custom symptom
+    	    }
+    	}
+    	if(hasCustomSymptom) {
+    		appointment = fireCustomRules(appointment, allSymptoms, allAppointments);
+    	}
+    	
+    	return appointment;
+    }
+    
+    public Appointment fireCustomRules(Appointment appointment, List<Symptom> allSymptoms, List<Appointment> allAppointments) {
     	InputStream template = AppointmentService.class.getResourceAsStream("/rules/templatetable/new-rule.drt");
         List<NewRuleTemplateModel> data = nrtmService.getAll();
         
@@ -78,31 +126,20 @@ public class AppointmentService {
         System.out.println(drl);
         
         KieSession ksession = createKieSessionFromDRL(drl);
-    	
-    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
-    	List<Symptom> allSymptoms = symptomService.findAllSymptoms();
-    	List<Appointment> allAppointments = this.findAllAppointments();
-    	for(Symptom s: allSymptoms) {
-    		kieSession.insert(s);
+        
+        for(Symptom s: allSymptoms) {
     		ksession.insert(s);
     	}
     	for(Appointment a: allAppointments) {
-    		System.out.println("APPOINTMENTS START");
-    		System.out.println(a.getDate().toString());
-    		System.out.println("APPOINTMENTS END");
-    		kieSession.insert(a);
     		ksession.insert(a);
     	}
-
-    	kieSession.insert(appointment);
-    	kieSession.insert(appointment.getPatient());
     	
     	ksession.insert(appointment);
     	ksession.insert(appointment.getPatient());
-    	kieSession.fireAllRules();
-    	kieSession.dispose();
+    	
     	ksession.fireAllRules();
     	ksession.dispose();
+    	
     	return appointment;
     }
     

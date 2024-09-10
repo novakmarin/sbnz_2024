@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Therapy;
 import com.ftn.sbnz.service.SampleAppService;
 import com.ftn.sbnz.service.repository.PatientRepository;
+import com.ftn.sbnz.service.repository.TherapyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,10 @@ public class PatientService {
     
     @Autowired
     SymptomService symptomService;
+    
+    
+    @Autowired
+    TherapyRepository therapyRepository;
     
     @Autowired
     KieContainer kieContainer;
@@ -63,7 +69,7 @@ public class PatientService {
     }
     
     public List<Patient> findPatientsWithSymptom(Symptom symptom) {
-    	KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+    	KieSession kieSession = kieContainer.newKieSession("bwKsession");
     	ArrayList<Symptom> allSymptoms = (ArrayList<Symptom>) symptomService.findAllSymptoms();
     	ArrayList<Patient> allPatients = (ArrayList<Patient>) patientRepository.findAll();
     	for(Symptom s: allSymptoms) {
@@ -85,6 +91,11 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
+    	List<Therapy> therapies = new ArrayList<Therapy>();
+    	for(Therapy t: patient.getPreviousTherapies()) {
+    		therapies.add(therapyRepository.findByName(t.getName()).get());
+    	}
+    	patient.setPreviousTherapies(therapies);
         return patientRepository.save(patient);
     }
 

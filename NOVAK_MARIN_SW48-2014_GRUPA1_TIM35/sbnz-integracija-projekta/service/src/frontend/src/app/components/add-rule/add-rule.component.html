@@ -1,6 +1,6 @@
 <div class="form-container">
     <h2>Unos novog simptoma ili mentalne bolesti</h2>
-    <form name = "addNewSymptom" (ngSubmit)="onSubmit()">
+    <form name = "addNewSymptomForm" #addNewSymptomForm="ngForm" (ngSubmit)="onSubmit()">
         <div class="form-field">
             <label for="name">Naziv</label>
             <input pInputText type="text" id="name" name = "name" [(ngModel)] = "symptom.name" placeholder="Unesite naziv" required>
@@ -8,6 +8,10 @@
         <div class="form-field">
             <mat-checkbox [checked]="symptom.amentalIllness" (change)="symptom.amentalIllness = !symptom.amentalIllness"  class="example-margin">Ovo je mentalna bolest</mat-checkbox>
         </div>  
+        <div *ngIf="symptom.amentalIllness" class="form-field">
+          <label for="code">ICD-10 kod</label>
+          <input pInputText type="text" id="code" name = "code" [(ngModel)] = "symptom.code" placeholder="Unesite ICD-10 kod">
+        </div>
         <div class="form-field">
             <mat-checkbox [checked]="symptom.hasSpecialDiagnostics" (change)="symptom.hasSpecialDiagnostics = !symptom.hasSpecialDiagnostics" class="example-margin">Ima posebno pravilo za liječenje</mat-checkbox>
         </div>  
@@ -54,9 +58,35 @@
             <label>Uslov</label>
             <p>Da bi simptom/bolest bio/la dijagnostifikovan/a potrebno je da broj prisutnih podsimptoma bude barem: </p>
             <input pInputText type="text" id="minSymptomsPresent" name = "minSymptomsPresent" [(ngModel)] = "nrtm.minSymptomsPresent" placeholder="Unesite broj">
+      </div>
+      <div class="form-field">
+        <label>Unesite terapije:</label>
+        <p-autoComplete 
+            name = "symptomsAutoComplete"
+            [(ngModel)]="selectedItem1" 
+            [suggestions]="filteredItems1" 
+            (completeMethod)="filterItems1($event)" 
+            (keydown)="onKeyDown1($event)"
+            (onSelect)="onSelect1()"
+            [minLength]="1" 
+            placeholder="Unesite simptome...">
+        </p-autoComplete>
+      </div>
+      <div class="form-field">
+        <label>Terapije: </label>
+        <div>
+            <mat-chip-set aria-label="Alergije" name = "Allergies">
+              <div class = "chip-border" *ngFor="let chip of selectedTherapies let i = index">
+                <mat-basic-chip class="custom-chip"  removable (removed)="removeTherapyChip(i)">
+                {{ chip.name }}
+                <button matChipRemove>&times;</button>
+                </mat-basic-chip>
+              </div>
+            </mat-chip-set>
         </div>
+      </div>
       <p-messages [(value)]="msgs"></p-messages>
       <div *ngIf="error" class="error">{{error}}</div>
-      <button name="saveNewRule" label="Sačuvaj" pButton type="submit" class="p-button p-component">Sačuvaj</button>
+      <button name="saveNewRule" label="Sačuvaj" pButton type="submit" class="p-button p-component" [disabled]="!addNewSymptomForm.form.valid">Sačuvaj</button>
     </form>
   </div>

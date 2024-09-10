@@ -101,6 +101,33 @@
                     </mat-chip-set>
                 </div>
               </div>
+
+              <div class="form-field">
+                <label>Preporučena terapija: </label>
+                <div>
+                    <mat-chip-set aria-label="Terapije" name = "Therapies" >
+                      <div class = "diagnosis-chip-border1" *ngFor="let chip of suggestedTherapies; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip"   (click) = "onTherapyChipClick(chip)">
+                                {{ chip.name }}
+                                <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Zaključena terapija: </label>
+                <div>
+                    <mat-chip-set aria-label="Simptomi" name = "Symptoms">
+                      <div class = "diagnosis-chip-border" *ngFor="let chip of patient.currentTherapies; let i = index;">
+                        <mat-basic-chip class="diagnosis-chip-final" removable (removed)="removeTherapy(i)">
+                                {{ chip.name }}
+                                <button matChipRemove>&times;</button>
+                        </mat-basic-chip>
+                      </div>
+                    </mat-chip-set>
+                </div>
+              </div>
               <div class="form-field">
                 <label>Naponeme: </label>
                 <textarea 

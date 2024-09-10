@@ -43,3 +43,38 @@
 ::ng-deep .p-datepicker-trigger {
     background-color: #333; /* Change to your desired color */
   }
+
+  .chip-border{
+    margin-top: 20px;
+  }
+  
+  .custom-chip{
+      background-color: #404040; /* Change this to your preferred color */
+      color: white; /* Adjust text color if needed */
+      padding-left: 10px; 
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: large;
+      font-weight: 550;
+      border-radius: 10px;
+      margin: 5px;
+      /* margin: 1%;
+      padding-left: 10px;
+      font-size: large;
+      font-weight: 550;
+      padding-bottom: 5px;
+      border-radius: 10px;
+      height: 120px; */
+      
+  }
+  .custom-chip button{
+      background-color: #404040; 
+      border-radius: 10px;
+      height: 30px;
+      padding: 3px;
+      font-size: 30px;
+  }
+  
+  .custom-chip button:hover{
+      background-color: #ff0000;
+  }

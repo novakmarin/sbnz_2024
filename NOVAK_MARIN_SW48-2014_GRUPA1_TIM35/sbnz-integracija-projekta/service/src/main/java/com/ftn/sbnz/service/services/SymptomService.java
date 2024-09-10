@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.models.Symptom;
+import com.ftn.sbnz.model.models.Therapy;
 import com.ftn.sbnz.service.repository.SymptomRepository;
+import com.ftn.sbnz.service.repository.TherapyRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +17,7 @@ import java.util.Optional;
 public class SymptomService {
 
     private final SymptomRepository symptomRepository;
-    
+
 
     @Autowired
     public SymptomService(SymptomRepository symptomRepository) {
@@ -40,6 +42,8 @@ public class SymptomService {
     public Symptom findSymptomByCode(String code) {
     	return symptomRepository.findByCode(code);
     }
+    
+    
 
     public void deleteSymptom(Long id) {
         symptomRepository.deleteById(id);
