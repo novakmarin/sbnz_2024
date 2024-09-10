@@ -33,7 +33,7 @@ lock-on-active true
 when
     $patients: List()
     $symptomName: String()
-    $p: Patient()
+    $p: Patient(this not memberOf $patients)
     $s: Symptom(name == $symptomName)
     not Patient( id == $p.id) from $patients
     //$s1: Symptom(name == "Briga")
@@ -45,5 +45,6 @@ then
     System.out.println($p.getFirstName() + " " + $p.getLastName());
     System.out.println("has " + $s.getName() + ".\n");
     modify($patients){ add($p) }
+    update($patients)
 end
 

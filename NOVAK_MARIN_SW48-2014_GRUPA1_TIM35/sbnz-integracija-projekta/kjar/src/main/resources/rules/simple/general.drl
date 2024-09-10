@@ -74,6 +74,7 @@ then
     System.out.println("RULE 3: Symptom manic episode added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($sNo);
     $patient.getCurrentSymptoms().add($manicSymptom);
+    update($patient);
 end
 
 rule "Identify manjak volje"
@@ -95,6 +96,7 @@ then
     System.out.println("RULE 3: Symptom manjak volje added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($sNo);
     $patient.getCurrentSymptoms().add($manjakSymptom);
+    update($patient);
 end
 
 rule "Identify halluciantions"
@@ -110,6 +112,7 @@ when
 then
     System.out.println("RULE 3: Symptom hallucinations added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     $patient.getCurrentSymptoms().add($hallucinationsSymptom);
+    update($patient);
 end
 
 rule "Identify nepovezano misljenje i govor"
@@ -130,6 +133,7 @@ when
 then
     System.out.println("RULE 3: Symptom nepovezano mišljenje i govor added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     $patient.getCurrentSymptoms().add($nmigSymptom);
+    update($patient);
 end
 
 rule "Identify sleep issues"
@@ -145,6 +149,7 @@ when
 then
     System.out.println("RULE 3: Symptom sleep issues added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     $patient.getCurrentSymptoms().add($siSymptom);
+    update($patient);
 end
 
 rule "Identify depression"
@@ -166,6 +171,7 @@ then
     System.out.println("RULE 3: Symptom depresija added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     System.out.println($sNo);
     $patient.getCurrentSymptoms().add($dSymptom);
+    update($patient);
 end
 
 rule "Identify depressive disorder on Patient History"
@@ -243,6 +249,7 @@ when
 then
     System.out.println("RULE 2: Symptom bipolar affective disorder added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     $patient.getCurrentSymptoms().add($bapSymptom);
+    update($patient);
 end
 
 rule "Identify schizophrenia on Patient History"
@@ -277,7 +284,9 @@ then
     System.out.println("RULE 2: Symptom schizophrenia added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
     //$appointment.getCurrentSymptoms().add($gadSymptom);
     $patient.getCurrentSymptoms().add($sSymptom);
+    $appointment1.getCurrentSymptoms().add($sSymptom);
     update($patient)
+    update($appointment)
 end
 
 rule "Identify schizoaffective disorder on Patient History"
@@ -370,4 +379,36 @@ then
 	System.out.println("USLO u therapy pravilo");
     $therapies.addAll($suitableTherapies);
     update($therapies)
+end
+
+rule "Identify Izbjegavanje socijalnih situacija"
+when
+    $newSymptom : Symptom(name == "Izbjegavanje socijalnih situacija", $newSSymptoms: childSymptoms)
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    not Symptom(id == $newSymptom.id) from $patientSymptoms
+    $sNo: Number(intValue >= 2) from accumulate(
+        $s1: Symptom(this memberOf $newSSymptoms) from $patient.currentSymptoms,
+        count($s1)
+    )
+then
+    System.out.println("RULE: Symptom izbjegavanje socijalnih situacija added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($newSymptom);
+    update($patient)
+end
+
+rule "Identify Strah od socijalnih situacija"
+when
+    $newSymptom : Symptom(name == "Strah od socijalnih situacija", $newSSymptoms: childSymptoms)
+	$patient : Patient($patientSymptoms : currentSymptoms)
+    not Symptom(id == $newSymptom.id) from $patientSymptoms
+    $sNo: Number(intValue >= 3) from accumulate(
+        $s1: Symptom(this memberOf $newSSymptoms) from $patient.currentSymptoms,
+        count($s1)
+    )
+then
+    System.out.println("RULE: Symptom Strah od socijalnih situacija added to patient " + $patient.getFirstName() + " " + $patient.getLastName());
+    System.out.println($sNo);
+    $patient.getCurrentSymptoms().add($newSymptom);
+    update($patient)
 end

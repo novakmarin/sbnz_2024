@@ -10,7 +10,7 @@
     <div *ngIf="patientChoosen">
         <div class="form-container">
             <h2>Dijagnostifikovanje</h2>
-            <form (ngSubmit)="onAppointmentSubmit()">
+            <form (ngSubmit)="onAppointmentSubmit()" (keydown.enter)="$event.preventDefault()">
               <div class="form-field">
                 <div class = "patient-data">
                     <div>
